@@ -7,13 +7,13 @@ const tabs = [
 
 export default function Tab({ currentTab = tabs[0].id, onChangeTab }) {
   return (
-    <ul className="flex items-center justify-center rounded-lg bg-gray-100 p-2">
+    <ul className="flex items-center justify-center rounded-lg bg-stone-100 p-2">
       {tabs.map((tab) => (
         <li key={tab.id} className="w-full">
           <button
             className={`block w-full rounded-lg p-2 ${
               currentTab === tab.id
-                ? "bg-primary-500 font-semibold text-white"
+                ? "bg-primary-400 font-semibold text-white"
                 : "bg-transparent"
             }`}
             onClick={() => onChangeTab(tab.id)}
