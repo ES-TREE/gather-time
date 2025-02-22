@@ -1,6 +1,6 @@
 import PropTypes from "prop-types"
 
-export default function Button({ fill, className, children, ...props }) {
+export default function Button({ fill = true, className, children, ...props }) {
   const buttonStyle = fill
     ? "bg-primary-400 text-white"
     : "bg-white text-primary-400 border border-primary-400"

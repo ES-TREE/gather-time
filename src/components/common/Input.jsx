@@ -5,9 +5,9 @@ export default function Input({ label = "", className = "", ...props }) {
   const id = useId()
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 text-sm">
       {label && (
-        <label htmlFor={id} className="font-bold">
+        <label htmlFor={id} className="text-base font-bold">
           {label}
         </label>
       )}
