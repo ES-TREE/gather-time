@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "prettier": "prettier --write --ignore-path .gitignore .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
