@@ -1,4 +1,4 @@
-import Header from "../components/app/Header";
+import Header from "../components/app/Header"
 
 export default {
   title: "App/Header",
@@ -7,8 +7,8 @@ export default {
   parameters: {
     layout: "fullscreen",
   },
-};
+}
 
 export const Default = {
   args: {},
-};
+}

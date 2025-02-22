@@ -1,4 +1,4 @@
-import CreateEventPage from "../pages/CreateEventPage";
+import CreateEventPage from "../pages/CreateEventPage"
 
 const routes = [
   {
@@ -7,6 +7,6 @@ const routes = [
     path: "/",
     element: <CreateEventPage />,
   },
-];
+]
 
-export default routes;
+export default routes

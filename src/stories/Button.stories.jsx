@@ -1,6 +1,6 @@
-import { fn } from "@storybook/test";
+import { fn } from "@storybook/test"
 
-import Button from "../components/common/Button";
+import Button from "../components/common/Button"
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 export default {
@@ -15,18 +15,18 @@ export default {
     backgroundColor: { control: "color" },
   },
   args: { onClick: fn() },
-};
+}
 
 export const Fill = {
   args: {
     fill: true,
     children: "버튼",
   },
-};
+}
 
 export const Outline = {
   args: {
     fill: false,
     children: "버튼",
   },
-};
+}

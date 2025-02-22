@@ -1,7 +1,7 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 
 // 라우팅
-import routes from "./routes";
+import routes from "./routes"
 
 export default function App() {
   return (
@@ -14,5 +14,5 @@ export default function App() {
         </Routes>
       </main>
     </Router>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import "../src/index.css";
+import "../src/index.css"
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {
@@ -10,6 +10,6 @@ const preview = {
       },
     },
   },
-};
+}
 
-export default preview;
+export default preview
