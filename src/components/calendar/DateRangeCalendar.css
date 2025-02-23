@@ -16,4 +16,5 @@
   cursor: default;
   color: #ccc;
   pointer-events: none;
+  opacity: 0;
 }
