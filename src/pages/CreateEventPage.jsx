@@ -1,5 +1,5 @@
 import FixedBottomButton from "../components/button/FixedBottomButton"
-import DateRangeCalendar from "../components/common/DateRangeCalendar"
+import DateRangeCalendar from "../components/calendar/DateRangeCalendar"
 import Input from "../components/common/Input"
 
 export default function CreateEventPage() {

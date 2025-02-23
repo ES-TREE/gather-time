@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import Calendar from "react-calendar"
-import "../../styles/calendar.css"
+import "./DateRangeCalendar.css"
 
 export default function DateRangeCalendar() {
   const [months, setMonths] = useState([new Date()]) // 초기값: 현재 달
