@@ -32,15 +32,15 @@ export default function EventPage() {
     },
     {
       date: new Date(2025, 2, 15),
-      votes: 5,
+      votes: 4,
     },
     {
       date: new Date(2025, 3, 2),
       votes: 1,
     },
     {
-      date: new Date(2025, 3, 22),
-      votes: 4,
+      date: new Date(2025, 4, 22),
+      votes: 5,
     },
   ]
 
