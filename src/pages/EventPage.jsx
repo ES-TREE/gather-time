@@ -1,10 +1,12 @@
 import { useParams } from "react-router-dom"
 import Button from "../components/common/Button"
+import DateRangeCalendar from "../components/common/DateRangeCalendar"
 import Input from "../components/common/Input"
+import Tab from "../components/common/Tab"
 
 export default function EventPage() {
   const { uid } = useParams()
-  const isLoggedIn = false
+  const isLoggedIn = true
 
   /**
    * 구현 로직
@@ -15,13 +17,32 @@ export default function EventPage() {
    */
 
   return isLoggedIn ? (
-    <></>
+    <div className="space-y-5">
+      <h2 className="text-lg font-bold">이벤트 아이디: {uid}</h2>
+
+      <Tab />
+
+      <section>
+        <div className="space-y-1">
+          <h2 className="font-bold">일정 선택</h2>
+          <p className="text-sm text-stone-500">
+            참여 가능한 일정을 선택해주세요.
+          </p>
+        </div>
+
+        <DateRangeCalendar />
+      </section>
+
+      <section className="fixed bottom-0 left-1/2 w-full max-w-screen-sm -translate-x-1/2 transform bg-white p-5">
+        <Button>초기화</Button>
+      </section>
+    </div>
   ) : (
     <>
       <div className="flex h-[calc(100vh-96px)] flex-col justify-center gap-8">
         <section className="text-center">
           <h2 className="text-lg font-bold">이벤트 아이디: {uid}</h2>
-          <p className="text-stone-500">
+          <p className="text-sm text-stone-500">
             로그인 안내와 이름, 비밀번호 찾기 불가능한점 안내
           </p>
         </section>
