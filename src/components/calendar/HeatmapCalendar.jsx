@@ -1,6 +1,7 @@
 import PropTypes from "prop-types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import Calendar from "react-calendar"
+import "./calendar.css"
 
 export default function HeatmapCalendar({
   startDate,
