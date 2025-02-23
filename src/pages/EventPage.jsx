@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useParams } from "react-router-dom"
 import FixedBottomButton from "../components/button/FixedBottomButton"
 import Button from "../components/common/Button"
@@ -5,26 +6,20 @@ import DateRangeCalendar from "../components/common/DateRangeCalendar"
 import Input from "../components/common/Input"
 import Tab from "../components/common/Tab"
 
+/**
+ * 구현 로직
+ * 1. uid로 이벤트 데이터 조회 후 이름 보여주기
+ * 2. 로그인 여부 체크
+ *    - 로그인 X: 로그인 컴포넌트 보여주기
+ *    - 로그인 O: 이벤트 스케줄 선택 컴포넌트 보여주기
+ */
+
 export default function EventPage() {
-  const { uid } = useParams()
-  const currentTab = "view"
-  const isLoggedIn = true
-
-  /**
-   * 구현 로직
-   * 1. uid로 이벤트 데이터 조회 후 이름 보여주기
-   * 2. 로그인 여부 체크
-   *    - 로그인 X: 로그인 컴포넌트 보여주기
-   *    - 로그인 O: 이벤트 스케줄 선택 컴포넌트 보여주기
-   */
-
-  return isLoggedIn ? (
-    <div className="space-y-5">
-      <h2 className="text-lg font-bold">이벤트 아이디: {uid}</h2>
-
-      <Tab currentTab={currentTab} />
-
-      {currentTab === "input" ? (
+  const tabs = [
+    {
+      id: "input",
+      label: "입력",
+      jsx: (
         <>
           <section>
             <div className="space-y-1">
@@ -39,11 +34,28 @@ export default function EventPage() {
 
           <FixedBottomButton>초기화</FixedBottomButton>
         </>
-      ) : (
+      ),
+    },
+    {
+      id: "view",
+      label: "조회",
+      jsx: (
         <>
           <DateRangeCalendar />
         </>
-      )}
+      ),
+    },
+  ]
+
+  const { uid } = useParams()
+  const [currentTab, setCurrentTab] = useState(tabs[0].id)
+  const isLoggedIn = true
+
+  return isLoggedIn ? (
+    <div className="space-y-5">
+      <h2 className="text-lg font-bold">이벤트 아이디: {uid}</h2>
+
+      <Tab tabs={tabs} currentTab={currentTab} onChangeTab={setCurrentTab} />
     </div>
   ) : (
     <>
