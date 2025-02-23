@@ -1,4 +1,4 @@
-import Button from "../components/common/Button"
+import FixedBottomButton from "../components/button/FixedBottomButton"
 import DateRangeCalendar from "../components/common/DateRangeCalendar"
 import Input from "../components/common/Input"
 
@@ -24,9 +24,7 @@ export default function CreateEventPage() {
         <DateRangeCalendar />
       </section>
 
-      <section className="fixed bottom-0 left-1/2 w-full max-w-screen-sm -translate-x-1/2 transform bg-white p-5">
-        <Button>이벤트 생성하기</Button>
-      </section>
+      <FixedBottomButton>이벤트 생성하기</FixedBottomButton>
     </form>
   )
 }

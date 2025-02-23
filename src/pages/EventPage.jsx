@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom"
+import FixedBottomButton from "../components/button/FixedBottomButton"
 import Button from "../components/common/Button"
 import DateRangeCalendar from "../components/common/DateRangeCalendar"
 import Input from "../components/common/Input"
@@ -6,6 +7,7 @@ import Tab from "../components/common/Tab"
 
 export default function EventPage() {
   const { uid } = useParams()
+  const currentTab = "view"
   const isLoggedIn = true
 
   /**
@@ -20,22 +22,28 @@ export default function EventPage() {
     <div className="space-y-5">
       <h2 className="text-lg font-bold">이벤트 아이디: {uid}</h2>
 
-      <Tab />
+      <Tab currentTab={currentTab} />
 
-      <section>
-        <div className="space-y-1">
-          <h2 className="font-bold">일정 선택</h2>
-          <p className="text-sm text-stone-500">
-            참여 가능한 일정을 선택해주세요.
-          </p>
-        </div>
+      {currentTab === "input" ? (
+        <>
+          <section>
+            <div className="space-y-1">
+              <h2 className="font-bold">일정 선택</h2>
+              <p className="text-sm text-stone-500">
+                참여 가능한 일정을 선택해주세요.
+              </p>
+            </div>
 
-        <DateRangeCalendar />
-      </section>
+            <DateRangeCalendar />
+          </section>
 
-      <section className="fixed bottom-0 left-1/2 w-full max-w-screen-sm -translate-x-1/2 transform bg-white p-5">
-        <Button>초기화</Button>
-      </section>
+          <FixedBottomButton>초기화</FixedBottomButton>
+        </>
+      ) : (
+        <>
+          <DateRangeCalendar />
+        </>
+      )}
     </div>
   ) : (
     <>
@@ -58,9 +66,7 @@ export default function EventPage() {
         </form>
       </div>
 
-      <section className="fixed bottom-0 left-1/2 w-full max-w-screen-sm -translate-x-1/2 transform bg-white p-5">
-        <Button>링크 복사하기</Button>
-      </section>
+      <FixedBottomButton>링크 복사하기</FixedBottomButton>
     </>
   )
 }
