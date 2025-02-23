@@ -1,0 +1,19 @@
+.react-calendar__month-view__weekdays {
+  color: #999;
+  text-align: center;
+  font-size: 14px;
+}
+
+.react-calendar__month-view__weekdays abbr {
+  text-decoration: none;
+}
+
+.react-calendar__navigation {
+  display: none;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  cursor: default;
+  color: #ccc;
+  pointer-events: none;
+}

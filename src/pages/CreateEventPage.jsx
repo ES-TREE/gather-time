@@ -1,4 +1,5 @@
 import Button from "../components/common/Button"
+import DateRangeCalendar from "../components/common/DateRangeCalendar"
 import Input from "../components/common/Input"
 
 export default function CreateEventPage() {
@@ -9,12 +10,23 @@ export default function CreateEventPage() {
    */
 
   return (
-    <section>
+    <form className="space-y-5">
       <Input label="이벤트 이름" placeholder="이벤트 이름을 입력해주세요." />
 
-      <div className="fixed bottom-0 left-1/2 w-full max-w-screen-sm -translate-x-1/2 transform bg-white p-5">
+      <section>
+        <div className="space-y-1">
+          <h2 className="font-bold">일정 선택</h2>
+          <p className="text-sm text-stone-500">
+            이벤트를 생성할 일정을 선택해주세요.
+          </p>
+        </div>
+
+        <DateRangeCalendar />
+      </section>
+
+      <section className="fixed bottom-0 left-1/2 w-full max-w-screen-sm -translate-x-1/2 transform bg-white p-5">
         <Button>이벤트 생성하기</Button>
-      </div>
-    </section>
+      </section>
+    </form>
   )
 }
