@@ -1,5 +1,8 @@
 import PropTypes from "prop-types"
+import { useState } from "react"
 import Calendar from "react-calendar"
+import Button from "../common/Button"
+import Modal from "../common/Modal"
 import "./calendar.css"
 
 export default function HeatmapCalendarItem({
@@ -9,7 +12,7 @@ export default function HeatmapCalendarItem({
   selectedDates,
   totalVotes,
 }) {
-  const isModalOpen = true
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
@@ -30,9 +33,18 @@ export default function HeatmapCalendarItem({
           getCellDetail({ date, selectedDates, totalVotes })
         }
         onClickDay={(date) => {
-          console.log(date)
+          setIsModalOpen(true)
         }}
       />
+
+      <Modal open={isModalOpen} className="space-y-1">
+        <h2 className="text-base font-bold">2025년 2월 15일</h2>
+        <p className="text-stone-500">참석예정자:</p>
+        <p className="pb-3">{["서은파", "서나무"].join(", ")}</p>
+        <Button onClick={() => setIsModalOpen(false)} fill={false}>
+          닫기
+        </Button>
+      </Modal>
     </>
   )
 }

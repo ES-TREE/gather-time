@@ -41,11 +41,8 @@ export default function HeatmapCalendar({
 
   return (
     <div className="overflow-y-auto rounded-lg text-sm">
-      {months.map((date, index) => (
-        <div
-          key={index}
-          ref={index === months.length - 1 ? lastCalendarRef : null}
-        >
+      {months.map((date, idx) => (
+        <div key={idx} ref={idx === months.length - 1 ? lastCalendarRef : null}>
           <HeatmapCalendarItem
             date={date}
             startDate={startDate}
