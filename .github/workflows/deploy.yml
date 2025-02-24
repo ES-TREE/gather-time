@@ -7,31 +7,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: pandoc/latex
 
     steps:
       - uses: actions/checkout@v4
+      - name: Install mustache (to update the date)
+        run: apk add ruby && gem install mustache
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y ruby
-          gem install mustache
-
-      - name: Generate output
+      - name: creates output
         run: sh ./build.sh
 
       - name: Pushes to another repository
         id: push_directory
         uses: cpina/github-action-push-to-another-repository@main
+
         env:
           API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
+
         with:
           source-directory: "output"
           destination-github-username: "ixio0330"
           destination-repository-name: "gather-time"
           user-email: ${{ secrets.EMAIL }}
-          commit-message: "Auto-sync: ${{ github.event.head_commit.message || 'Auto update' }}"
+          commit-message: ${{ github.event.commits[0].message }}
           target-branch: main
 
-      - name: Test output directory
+      - name: Test get variable exported by push-to-another-repository
         run: echo $DESTINATION_CLONED_DIRECTORY
