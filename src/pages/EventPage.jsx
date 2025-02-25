@@ -14,8 +14,8 @@ import supabase from "../libs/supabase"
  */
 
 export default function EventPage() {
-  const [participantName, setParticipantName] = useState("");
-  const [password, setPassword] = useState("");
+  const [participantName, setParticipantName] = useState("")
+  const [password, setPassword] = useState("")
   // ! mock data
   // 로그인 여부
   const isLoggedIn = false
@@ -98,11 +98,12 @@ export default function EventPage() {
   // 링크 복사하기
   const copyUrlLink = () => {
     try {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(window.location.href)
+      window.alert("링크를 복사했습니다.")
     } catch (err) {
-      console.error("링크 복사 실패: ", err);
+      console.error("링크 복사 실패: ", err)
     }
-  };
+  }
 
   useEffect(() => {
     fetchEventName()
@@ -124,16 +125,14 @@ export default function EventPage() {
           </p>
         </section>
 
-        <form 
-          onSubmit={(e) => 
-            e.preventDefault()
-          }
-          className="space-y-5">
-          <Input label="이름" 
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+          <Input
+            label="이름"
             value={participantName}
             onChange={(e) => setParticipantName(e.target.value)}
-            type="text" 
-            placeholder="이름을 입력해주세요." />
+            type="text"
+            placeholder="이름을 입력해주세요."
+          />
           <Input
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -145,9 +144,7 @@ export default function EventPage() {
         </form>
       </div>
 
-      <FixedBottomButton
-        onClick={() => copyUrlLink()}
-      >
+      <FixedBottomButton onClick={() => copyUrlLink()}>
         링크 복사하기
       </FixedBottomButton>
     </>
