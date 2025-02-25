@@ -10,14 +10,13 @@ import supabase from "../libs/supabase"
 
 /**
  * 구현 로직
- * - 링크 복사하기 기능
  * - 이벤트 조회 실패시 오류 대응
  */
 
 export default function EventPage() {
   const [participantName, setParticipantName] = useState("");
   const [password, setPassword] = useState("");
-
+  const [copyButtonText, setCopyButtonText] = useState("");
   // ! mock data
   // 로그인 여부
   const isLoggedIn = false
@@ -97,6 +96,15 @@ export default function EventPage() {
     setEventName(data?.title)
   }
 
+  // 링크 복사하기
+  const copyUrlLink = () => {
+    try {
+      navigator.clipboard.writeText(window.location.href);
+    } catch (err) {
+      console.error("링크 복사 실패: ", err);
+    }
+  };
+
   useEffect(() => {
     fetchEventName()
   }, [uid])
@@ -138,7 +146,11 @@ export default function EventPage() {
         </form>
       </div>
 
-      <FixedBottomButton>링크 복사하기</FixedBottomButton>
+      <FixedBottomButton
+        onClick={() => copyUrlLink()}
+      >
+        링크 복사하기
+      </FixedBottomButton>
     </>
   )
 }
