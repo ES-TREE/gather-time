@@ -10,12 +10,14 @@ import supabase from "../libs/supabase"
 
 /**
  * 구현 로직
- * - 이름, 비밀번호 상태 연결
  * - 링크 복사하기 기능
  * - 이벤트 조회 실패시 오류 대응
  */
 
 export default function EventPage() {
+  const [participantName, setParticipantName] = useState("");
+  const [password, setPassword] = useState("");
+
   // ! mock data
   // 로그인 여부
   const isLoggedIn = false
@@ -115,9 +117,19 @@ export default function EventPage() {
           </p>
         </section>
 
-        <form className="space-y-5">
-          <Input label="이름" type="text" placeholder="이름을 입력해주세요." />
+        <form 
+          onSubmit={(e) => 
+            e.preventDefault()
+          }
+          className="space-y-5">
+          <Input label="이름" 
+            value={participantName}
+            onChange={(e) => setParticipantName(e.target.value)}
+            type="text" 
+            placeholder="이름을 입력해주세요." />
           <Input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             label="비밀번호 "
             type="password"
             placeholder="비밀번호를 입력해주세요."
