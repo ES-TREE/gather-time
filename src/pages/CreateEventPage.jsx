@@ -7,7 +7,8 @@ export default function CreateEventPage() {
   // 이벤트 이름
   const [eventName, setEventName] = useState("")
 
-  // TODO 캘린더 날짜 데이터
+  // 캘린더 시작 날짜, 종료 날짜
+  const [dateRange, setDateRange] = useState([new Date(), new Date()])
 
   const handleCreateEvent = async (e) => {
     e.preventDefault()
@@ -36,7 +37,11 @@ export default function CreateEventPage() {
           </p>
         </div>
 
-        <DateRangeCalendar />
+        <DateRangeCalendar
+          value={dateRange}
+          onChange={setDateRange}
+          selectRange={true}
+        />
       </section>
 
       <FixedBottomButton>이벤트 생성하기</FixedBottomButton>
