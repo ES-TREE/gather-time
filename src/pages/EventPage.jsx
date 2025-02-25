@@ -16,7 +16,6 @@ import supabase from "../libs/supabase"
 export default function EventPage() {
   const [participantName, setParticipantName] = useState("");
   const [password, setPassword] = useState("");
-  const [copyButtonText, setCopyButtonText] = useState("");
   // ! mock data
   // 로그인 여부
   const isLoggedIn = false
