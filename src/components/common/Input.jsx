@@ -13,7 +13,7 @@ export default function Input({ label = "", className = "", ...props }) {
       )}
       <input
         id={id}
-        className={`w-full rounded-lg border border-stone-300 p-2 outline-none focus:border-primary-400 ${className}`}
+        className={`w-full rounded-lg border border-stone-300 p-3 outline-none focus:border-primary-400 ${className}`}
         {...props}
       />
     </div>

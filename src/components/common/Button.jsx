@@ -7,7 +7,7 @@ export default function Button({ fill = true, className, children, ...props }) {
 
   return (
     <button
-      className={`${buttonStyle} w-full rounded-lg p-2 text-sm font-semibold ${className}`}
+      className={`${buttonStyle} w-full rounded-lg py-3 text-sm font-semibold ${className}`}
       {...props}
     >
       {children}
