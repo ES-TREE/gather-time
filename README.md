@@ -46,35 +46,37 @@
 ## 🗂 데이터베이스 모델링
 
 ### **1. events (행사)**
-| 컬럼명         | 데이터 타입      | 설명                  |
-|---------------|---------------|----------------------|
-| id           | BIGINT (PK)   | 행사 ID |
-| uuid         | CHAR(36)      | 행사 고유 식별자 (UUID) |
-| title        | VARCHAR(255)  | 행사 제목 |
-| start_date   | DATE          | 행사 시작일자 |
-| end_date     | DATE          | 행사 종료일자 |
-| created_at   | TIMESTAMP     | 생성 시간 |
-| updated_at   | TIMESTAMP     | 수정 시간 |
+| column_name      | data_type                   | is_nullable | column_default                             |
+| ---------------- | --------------------------- | ----------- | ------------------------------------------ |
+| id               | bigint                      | NO          | nextval('events_id_seq'::regclass)         |
+| uuid             | uuid                        | NO          | gen_random_uuid()                          |
+| title            | character varying           | NO          | null                                       |
+| start_date       | date                        | NO          | null                                       |
+| end_date         | date                        | NO          | null                                       |
+| created_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
+| updated_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
 
 ### **2. participants (참석자)**
-| 컬럼명         | 데이터 타입      | 설명                  |
-|---------------|---------------|----------------------|
-| id           | BIGINT (PK)   | 참석자 ID |
-| event_id     | BIGINT (FK)   | 행사 ID (참조) |
-| name         | VARCHAR(100)  | 참석자 이름 |
-| password_hash | VARCHAR(255) | 비밀번호 (해시 암호화) |
-| created_at   | TIMESTAMP     | 생성 시간 |
-| updated_at   | TIMESTAMP     | 수정 시간 |
+| column_name      | data_type                   | is_nullable | column_default                             |
+| ---------------- | --------------------------- | ----------- | ------------------------------------------ |
+| id               | bigint                      | NO          | nextval('participants_id_seq'::regclass)   |
+| event_id         | bigint                      | NO          | null                                       |
+| participant_name | character varying           | NO          | null                                       |
+| password         | character varying           | NO          | null                                       |
+| created_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
+| updated_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
+
 
 ### **3. availabilities (참석 가능 일자)**
-| 컬럼명         | 데이터 타입      | 설명                  |
-|---------------|---------------|----------------------|
-| id           | BIGINT (PK)   | 참석 가능 일자 ID |
-| event_id     | BIGINT (FK)   | 행사 ID (참조) |
-| participant_id | BIGINT (FK) | 참석자 ID (참조) |
-| selected_date | DATE          | 참석자가 선택한 가능 날짜 |
-| created_at   | TIMESTAMP     | 생성 시간 |
-| updated_at   | TIMESTAMP     | 수정 시간 |
+| column_name      | data_type                   | is_nullable | column_default                             |
+| ---------------- | --------------------------- | ----------- | ------------------------------------------ |
+| id               | bigint                      | NO          | nextval('availabilities_id_seq'::regclass) |
+| event_id         | bigint                      | NO          | null                                       |
+| participant_id   | bigint                      | NO          | null                                       |
+| selected_date    | date                        | NO          | null                                       |
+| created_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
+| updated_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
+
 
 ## 🚀 프로젝트 실행 방법
 
