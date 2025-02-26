@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { useParams } from "react-router-dom"
 import FixedBottomButton from "../components/button/FixedBottomButton"
 import DateRangeCalendar from "../components/calendar/DateRangeCalendar"
@@ -101,37 +102,54 @@ export default function EventPage() {
   const copyUrlLink = () => {
     try {
       navigator.clipboard.writeText(window.location.href)
-      window.alert("링크를 복사했습니다.")
+      toast("링크를 복사했어요.", {
+        icon: "✅",
+      })
     } catch (err) {
       console.error("링크 복사 실패: ", err)
     }
   }
 
   // 로그인
-  const handleLogin = async(e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
 
     if (!participantName) {
-      window.alert("이름을 입력해주세요.");
-      return;
+      toast("이름을 입력해주세요.", {
+        icon: "⚠️",
+      })
+      return
     }
     if (!password) {
-      window.alert("비밀번호를 입력해주세요.");
-      return;
+      toast("비밀번호를 입력해주세요.", {
+        icon: "⚠️",
+      })
+      return
     }
 
     // 중복값 체크
-    const result = await supabase.from("participants").select("*").eq("participant_name", participantName).eq("event_id", eventId).single();
+    const result = await supabase
+      .from("participants")
+      .select("*")
+      .eq("participant_name", participantName)
+      .eq("event_id", eventId)
+      .single()
     if (result.data) {
       // 비밀번호 확인
       if (result.data.password != password) {
         // 실패
-        window.alert("비밀번호를 다시 입력하세요.")
-        return;
+        toast("비밀번호를 다시 입력하세요.", {
+          icon: "❌",
+        })
+        return
       }
     } else {
       // 삽입
-      await supabase.from("participants").insert({event_id:eventId, participant_name:participantName, password:password});
+      await supabase.from("participants").insert({
+        event_id: eventId,
+        participant_name: participantName,
+        password: password,
+      })
     }
     // 값 변경
     setIsLoggedIn(true)
