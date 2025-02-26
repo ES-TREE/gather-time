@@ -16,9 +16,9 @@ import supabase from "../libs/supabase"
 export default function EventPage() {
   const [participantName, setParticipantName] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
   // ! mock data
-  // 로그인 여부
-  const isLoggedIn = false
   // 참여 가능 날짜
   const startDate = new Date(2025, 2, 1)
   const endDate = new Date(2025, 4, 31)
@@ -84,8 +84,9 @@ export default function EventPage() {
   const { uid } = useParams()
   const [currentTab, setCurrentTab] = useState(tabs[0].id)
   const [eventName, setEventName] = useState("")
+  const [eventId, setEventId] = useState(null)
 
-  const fetchEventName = async () => {
+  const fetchEventInfo = async () => {
     const { data } = await supabase
       .from("events")
       .select("*")
@@ -93,6 +94,7 @@ export default function EventPage() {
       .single()
 
     setEventName(data?.title)
+    setEventId(data?.id)
   }
 
   // 링크 복사하기
@@ -105,8 +107,38 @@ export default function EventPage() {
     }
   }
 
+  // 로그인
+  const handleLogin = async(e) => {
+    e.preventDefault()
+
+    if (!participantName) {
+      window.alert("이름을 입력해주세요.");
+      return;
+    }
+    if (!password) {
+      window.alert("비밀번호를 입력해주세요.");
+      return;
+    }
+
+    // 중복값 체크
+    const result = await supabase.from("participants").select("*").eq("participant_name", participantName).eq("event_id", eventId).single();
+    if (result.data) {
+      // 비밀번호 확인
+      if (result.data.password != password) {
+        // 실패
+        window.alert("비밀번호를 다시 입력하세요.")
+        return;
+      }
+    } else {
+      // 삽입
+      await supabase.from("participants").insert({event_id:eventId, participant_name:participantName, password:password});
+    }
+    // 값 변경
+    setIsLoggedIn(true)
+  }
+
   useEffect(() => {
-    fetchEventName()
+    fetchEventInfo()
   }, [uid])
 
   return isLoggedIn ? (
@@ -125,7 +157,7 @@ export default function EventPage() {
           </p>
         </section>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-5">
           <Input
             label="이름"
             value={participantName}
