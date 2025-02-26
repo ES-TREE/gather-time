@@ -1,23 +1,33 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 import FixedBottomButton from "../components/button/FixedBottomButton"
 import DateRangeCalendar from "../components/calendar/DateRangeCalendar"
 import Input from "../components/common/Input"
+import supabase from "../libs/supabase"
 
 export default function CreateEventPage() {
+  const navigate = useNavigate();
+
   // 이벤트 이름
   const [eventName, setEventName] = useState("")
-
   // 캘린더 시작 날짜, 종료 날짜
-  const [dateRange, setDateRange] = useState([new Date(), new Date()])
+  const [dateRange, setDateRange] = useState([])
 
   const handleCreateEvent = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    /**
-     * 구현 로직
-     * 1. 이벤트 이름 상태와 선택한 날짜 상태로 이벤트 생성
-     * 2. 이벤트 생성 후 이벤트 페이지(/uid)로 이동
-     */
+    if (!eventName) {
+      window.alert("이벤트 이름을 입력해주세요.");
+      return;
+    }
+    if (!dateRange.length) {
+      window.alert("이벤트 기간을 지정해주세요.");
+      return;
+    }
+
+    const result = await supabase.from("events").insert({title:eventName, start_date:dateRange[0], end_date:dateRange[1]}).select().single();
+    const eventUuid = result.data.uuid;
+    navigate(`/${eventUuid}`);
   }
 
   return (
