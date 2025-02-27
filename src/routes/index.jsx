@@ -11,7 +11,7 @@ const routes = [
   {
     id: "event-page",
     name: "이벤트",
-    path: "/:uid",
+    path: "/:uuid",
     element: <EventPage />,
   },
 ]

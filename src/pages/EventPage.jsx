@@ -79,7 +79,7 @@ export default function EventPage() {
   ]
 
   // 이벤트 uuid
-  const { uid } = useParams()
+  const { uuid } = useParams()
 
   const [currentTab, setCurrentTab] = useState(tabs[0].id)
 
@@ -98,7 +98,7 @@ export default function EventPage() {
     const { data } = await supabase
       .from("events")
       .select("*")
-      .eq("uuid", uid)
+      .eq("uuid", uuid)
       .single()
 
     setEventInfo({
@@ -193,7 +193,7 @@ export default function EventPage() {
 
   useEffect(() => {
     fetchEventInfo()
-  }, [uid])
+  }, [uuid])
 
   return participantInfo.id ? (
     <div className="space-y-5">
