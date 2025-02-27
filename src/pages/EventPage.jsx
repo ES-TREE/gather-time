@@ -15,10 +15,6 @@ import supabase from "../libs/supabase"
  */
 
 export default function EventPage() {
-  const [participantName, setParticipantName] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
   // ! mock data
   // 참여 가능 날짜
   const startDate = new Date(2025, 2, 1)
@@ -82,10 +78,21 @@ export default function EventPage() {
     },
   ]
 
+  // 이벤트 uuid
   const { uid } = useParams()
+
   const [currentTab, setCurrentTab] = useState(tabs[0].id)
-  const [eventName, setEventName] = useState("")
-  const [eventId, setEventId] = useState(null)
+
+  const [participantName, setParticipantName] = useState("")
+  const [password, setPassword] = useState("")
+  const [eventInfo, setEventInfo] = useState({
+    id: null,
+    title: null,
+  })
+  const [participantInfo, setParticipantInfo] = useState({
+    id: null,
+    participantName: null,
+  })
 
   const fetchEventInfo = async () => {
     const { data } = await supabase
@@ -94,8 +101,10 @@ export default function EventPage() {
       .eq("uuid", uid)
       .single()
 
-    setEventName(data?.title)
-    setEventId(data?.id)
+    setEventInfo({
+      id: data.id,
+      title: data.title,
+    })
   }
 
   // 링크 복사하기
@@ -114,6 +123,13 @@ export default function EventPage() {
   const handleLogin = async (e) => {
     e.preventDefault()
 
+    if (!eventInfo.id) {
+      toast("오류가 발생했어요. 새로고침을 해주세요.", {
+        icon: "⚠️",
+      })
+      return
+    }
+
     if (!participantName) {
       toast("이름을 입력해주세요.", {
         icon: "⚠️",
@@ -128,40 +144,60 @@ export default function EventPage() {
     }
 
     // 중복값 체크
-    const result = await supabase
+    const { data: existUser } = await supabase
       .from("participants")
-      .select("*")
+      .select("id, participant_name, password")
       .eq("participant_name", participantName)
-      .eq("event_id", eventId)
+      .eq("event_id", eventInfo.id)
       .single()
-    if (result.data) {
+
+    if (existUser) {
+      // * 로그인
       // 비밀번호 확인
-      if (result.data.password != password) {
+      if (existUser.password != password) {
         // 실패
         toast("비밀번호를 다시 입력하세요.", {
           icon: "❌",
         })
         return
       }
+
+      // 기존 유저 아이디 저장
+      setParticipantInfo({
+        id: existUser.id,
+        participantName: existUser.participant_name,
+      })
     } else {
-      // 삽입
-      await supabase.from("participants").insert({
-        event_id: eventId,
-        participant_name: participantName,
-        password: password,
+      // * 회원가입
+      const { data: newUser } = await supabase
+        .from("participants")
+        .insert({
+          event_id: eventInfo.id,
+          participant_name: participantName,
+          password: password,
+        })
+        .select("id, participant_name")
+        .single()
+
+      // 신규 유저 아이디 저장
+      setParticipantInfo({
+        id: newUser.id,
+        participantName: newUser.participant_name,
       })
     }
-    // 값 변경
-    setIsLoggedIn(true)
+
+    // 폼 데이터 초기화
+    setParticipantName("")
+    setPassword("")
   }
 
   useEffect(() => {
     fetchEventInfo()
   }, [uid])
 
-  return isLoggedIn ? (
+  return participantInfo.id ? (
     <div className="space-y-5">
-      <h2 className="text-lg font-bold">{eventName}</h2>
+      <h2 className="text-lg font-bold">{eventInfo.title}</h2>
 
       <Tab tabs={tabs} currentTab={currentTab} onChangeTab={setCurrentTab} />
     </div>
@@ -169,7 +205,7 @@ export default function EventPage() {
     <>
       <div className="flex h-[calc(100vh-96px)] flex-col justify-center gap-8">
         <section className="text-center">
-          <h2 className="text-lg font-bold">{eventName}</h2>
+          <h2 className="text-lg font-bold">{eventInfo.title}</h2>
           <p className="text-sm text-stone-500">
             로그인 안내와 이름, 비밀번호 찾기 불가능한점 안내
           </p>
