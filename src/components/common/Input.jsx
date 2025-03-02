@@ -1,6 +1,11 @@
 import PropTypes from "prop-types"
 import { useId } from "react"
 
+Input.propTypes = {
+  label: PropTypes.string,
+  className: PropTypes.string,
+}
+
 export default function Input({ label = "", className = "", ...props }) {
   const id = useId()
 
@@ -18,9 +23,4 @@ export default function Input({ label = "", className = "", ...props }) {
       />
     </div>
   )
-}
-
-Input.propTypes = {
-  label: PropTypes.string,
-  className: PropTypes.string,
 }

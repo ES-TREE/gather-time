@@ -5,6 +5,13 @@ import DateRangeCalendar from "../calendar/DateRangeCalendar"
 import HeatmapCalendar from "../calendar/HeatmapCalendar"
 import Tab from "../common/Tab"
 
+CalendarView.propTypes = {
+  eventInfo: PropTypes.shape({
+    id: PropTypes.number,
+    title: PropTypes.string,
+  }),
+}
+
 export default function CalendarView({ eventInfo }) {
   // ! mock data
   // 참여 가능 날짜
@@ -78,11 +85,4 @@ export default function CalendarView({ eventInfo }) {
       <Tab tabs={tabs} currentTab={currentTab} onChangeTab={setCurrentTab} />
     </div>
   )
-}
-
-CalendarView.propTypes = {
-  eventInfo: PropTypes.shape({
-    id: PropTypes.number,
-    title: PropTypes.string,
-  }),
 }

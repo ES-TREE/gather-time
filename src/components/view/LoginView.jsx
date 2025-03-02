@@ -6,6 +6,14 @@ import FixedBottomButton from "../button/FixedBottomButton"
 import Button from "../common/Button"
 import Input from "../common/Input"
 
+LoginView.propTypes = {
+  eventInfo: PropTypes.shape({
+    id: PropTypes.number,
+    title: PropTypes.string,
+  }),
+  setParticipantInfo: PropTypes.func.isRequired,
+}
+
 export default function LoginView({ eventInfo, setParticipantInfo }) {
   const [participantName, setParticipantName] = useState("")
   const [password, setPassword] = useState("")
@@ -124,12 +132,4 @@ export default function LoginView({ eventInfo, setParticipantInfo }) {
       </FixedBottomButton>
     </>
   )
-}
-
-LoginView.propTypes = {
-  eventInfo: PropTypes.shape({
-    id: PropTypes.number,
-    title: PropTypes.string,
-  }),
-  setParticipantInfo: PropTypes.func.isRequired,
 }
