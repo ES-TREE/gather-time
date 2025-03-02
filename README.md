@@ -12,35 +12,37 @@
 ## 📌 주요 기능
 
 ### 1. 이벤트 생성 ✨
-- 사용자가 행사(이벤트)를 생성하고, 제목 및 일정 범위를 설정할 수 있습니다.
-- 행사마다 고유한 **UUID**가 부여되어 쉽게 공유할 수 있습니다.
+- 사용자가 이벤트를 생성할 수 있습니다.
+- 이벤트 제목, 일자 범위, 시간 범위를 설정할 수 있습니다.
+- 행사마다 고유한 **UUID**가 부여되어 이벤트를 쉽게 공유할 수 있습니다.
 
 ### 2. 참석자 등록 👥
 - 행사에 참여할 참석자가 **이름과 비밀번호**를 입력하여 참석을 등록할 수 있습니다.
-- 비밀번호는 **해시 암호화**되어 저장됩니다.
 
 ### 3. 참석 가능 날짜 선택 📆
-- 참석자는 일정 범위 내에서 가능한 날짜를 선택할 수 있습니다.
-- 선택한 날짜는 데이터베이스에 저장되며, 모두가 확인할 수 있습니다.
+- 참석자는 일정 범위 내에서 참석 가능한 시간을 입력할 수 있습니다.
+- 입력한 시간은 데이터베이스에 저장되며, 참석자 모두가 확인할 수 있습니다.
 
 ### 4. 모임 일정 조율 📊
-- 모든 참석자의 참석 가능 일정을 한눈에 확인할 수 있는 UI 제공
-- 참석 가능한 날짜가 가장 많은 일정을 추천
+- 일자별 참석자가 가장 많은 시간 및 참석자 정보를 확인할 수 있는 UI 제공
 
-## ✅ 기능 목록 (2025.02.22 기준)
+## ✅ 기능 목록
 ### 1. 이벤트 생성 페이지
-- 달력 내 일자 선택: 드래그 또는 클릭하여 선택
 - 이벤트 제목 입력
+- 달력 내 이벤트 드래그 또는 클릭하여 시작 일자 및 종료 일자 선택
+- 이벤트 자동 종료 조건 추가: 이벤트 종료 시 수정 불가
 - 생성 버튼을 눌러 이벤트 생성 완료
+
 ### 2. 로그인 페이지 (이벤트 접속 후)
 - 사용자 등록: 이름 중복 체크 기능 제공
-### 4. 입력 페이지
-- 달력 일자 선택 기능: 드래그 또는 클릭하여 선택 가능
 - 이벤트 공유하기/링크 복사 버튼 제공
-### 5. 조회 페이지
-- 참석 가능한 인원이 존재하는 일자에 참석 가능한 인원 비율을 백분율과 분수로 모두 표시하고, 백분율에 따라 불투명도 조절
-- 예: 참석 가능 최대 인원 수 / 총 입력 수 형식으로 참석 가능 여부를 직관적으로 확인
-- 특정 일자를 클릭하면 모달을 띄우고, 모달 내에 해당 일자에 참석 가능한 인원 목록을 표시
+
+### 4. 참석 일정 입력 페이지
+- 참석 가능한 일자별 시간 범위를 드래그하여 등록하는 기능
+- 이벤트 공유하기/링크 복사 버튼 제공
+
+### 5. 참석 일정 조회 페이지
+- 참가자 조회 시 모달 -> 달력에 MAX(시작 시간, 최대 참가자 수/총 참가자 수), 참가자 정보 표시
 - 이벤트 공유하기/링크 복사 버튼 제공
 
 ## 🗂 데이터베이스 모델링
@@ -53,8 +55,11 @@
 | title            | character varying           | NO          | null                                       |
 | start_date       | date                        | NO          | null                                       |
 | end_date         | date                        | NO          | null                                       |
+| start_time       | time without time zone      | NO          | '00:00:00'::time without time zone         |
+| end_time         | time without time zone      | NO          | '23:59:00'::time without time zone         |
 | created_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
 | updated_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
+
 
 ### **2. participants (참석자)**
 | column_name      | data_type                   | is_nullable | column_default                             |
@@ -67,13 +72,13 @@
 | updated_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
 
 
-### **3. availabilities (참석 가능 일자)**
-| column_name      | data_type                   | is_nullable | column_default                             |
-| ---------------- | --------------------------- | ----------- | ------------------------------------------ |
+### **3. availabilities (참석 가능 일정)**
 | id               | bigint                      | NO          | nextval('availabilities_id_seq'::regclass) |
 | event_id         | bigint                      | NO          | null                                       |
 | participant_id   | bigint                      | NO          | null                                       |
 | selected_date    | date                        | NO          | null                                       |
+| start_time       | time without time zone      | NO          | '00:00:00'::time without time zone         |
+| end_time         | time without time zone      | NO          | '23:59:00'::time without time zone         |
 | created_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
 | updated_at       | timestamp without time zone | YES         | CURRENT_TIMESTAMP                          |
 
@@ -102,6 +107,8 @@ npm run build
 vercel
 ```
 
-## 🏗 향후 개발 계획 (사용자 요청 시)
-- 🛠 사용자 자동 로그인 및 로그아웃
-- ✅ 시간별 행사 참여 시간 표시
+## 🏗 향후 개발 계획
+- 이벤트 url 링크 생성 방식 보안 고려하여 개선 uuid -> ??
+- 이벤트 생성 전 회원가입 기능 추가
+- 조회 UI 개선
+- 사용자 자동 로그인 및 로그아웃
