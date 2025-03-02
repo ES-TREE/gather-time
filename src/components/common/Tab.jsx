@@ -1,5 +1,11 @@
 import PropTypes from "prop-types"
 
+Tab.propTypes = {
+  tabs: PropTypes.array,
+  currentTab: PropTypes.string,
+  onChangeTab: PropTypes.func.isRequired,
+}
+
 export default function Tab({ tabs = [], currentTab = "", onChangeTab }) {
   if (!tabs || tabs.length === 0) {
     return null
@@ -27,10 +33,4 @@ export default function Tab({ tabs = [], currentTab = "", onChangeTab }) {
       {tabs.find((tab) => tab.id === currentTab).jsx}
     </>
   )
-}
-
-Tab.propTypes = {
-  tabs: PropTypes.array,
-  currentTab: PropTypes.string,
-  onChangeTab: PropTypes.func.isRequired,
 }

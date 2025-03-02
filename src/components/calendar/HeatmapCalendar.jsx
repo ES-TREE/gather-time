@@ -2,6 +2,13 @@ import PropTypes from "prop-types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import HeatmapCalendarItem from "./HeatmapCalendarItem"
 
+HeatmapCalendar.propTypes = {
+  startDate: PropTypes.string,
+  endDate: PropTypes.string,
+  totalVotes: PropTypes.number,
+  selectedDates: PropTypes.array,
+}
+
 export default function HeatmapCalendar({
   startDate,
   endDate,
@@ -54,11 +61,4 @@ export default function HeatmapCalendar({
       ))}
     </div>
   )
-}
-
-HeatmapCalendar.propTypes = {
-  startDate: PropTypes.string,
-  endDate: PropTypes.string,
-  totalVotes: PropTypes.number,
-  selectedDates: PropTypes.array,
 }

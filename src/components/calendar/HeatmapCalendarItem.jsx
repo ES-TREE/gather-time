@@ -5,6 +5,14 @@ import Button from "../common/Button"
 import Modal from "../common/Modal"
 import "./calendar.css"
 
+HeatmapCalendarItem.propTypes = {
+  date: PropTypes.string,
+  startDate: PropTypes.string,
+  endDate: PropTypes.string,
+  totalVotes: PropTypes.number,
+  selectedDates: PropTypes.array,
+}
+
 export default function HeatmapCalendarItem({
   date,
   startDate,
@@ -47,14 +55,6 @@ export default function HeatmapCalendarItem({
       </Modal>
     </>
   )
-}
-
-HeatmapCalendarItem.propTypes = {
-  date: PropTypes.string,
-  startDate: PropTypes.string,
-  endDate: PropTypes.string,
-  totalVotes: PropTypes.number,
-  selectedDates: PropTypes.array,
 }
 
 function getCellClassName({ date, selectedDates, totalVotes }) {

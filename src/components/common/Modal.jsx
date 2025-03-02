@@ -1,5 +1,11 @@
 import PropTypes from "prop-types"
 
+Modal.propTypes = {
+  open: PropTypes.bool,
+  children: PropTypes.node,
+  className: PropTypes.string,
+}
+
 export default function Modal({ open, children, className = "" }) {
   if (!open) {
     return null
@@ -14,10 +20,4 @@ export default function Modal({ open, children, className = "" }) {
       </div>
     </article>
   )
-}
-
-Modal.propTypes = {
-  open: PropTypes.bool,
-  children: PropTypes.node,
-  className: PropTypes.string,
 }
