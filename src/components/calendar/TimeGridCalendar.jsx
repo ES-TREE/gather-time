@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import React, { useCallback, useState } from "react"
 import { useSwipeable } from "react-swipeable"
 
@@ -75,9 +76,9 @@ const TimeGrid = () => {
       <div className="flex w-full items-center justify-between">
         <button
           onClick={() => setCurrentWeek(currentWeek - 1)}
-          className="rounded bg-gray-200 p-2"
+          className="rounded-full p-2 active:bg-stone-100"
         >
-          ◀
+          <ChevronLeft />
         </button>
         <h2 className="text-lg font-bold">
           {today.getFullYear()}년{" "}
@@ -85,9 +86,9 @@ const TimeGrid = () => {
         </h2>
         <button
           onClick={() => setCurrentWeek(currentWeek + 1)}
-          className="rounded bg-gray-200 p-2"
+          className="rounded-full p-2 active:bg-stone-100"
         >
-          ▶
+          <ChevronRight />
         </button>
 
         {/* <button onClick={handleTodayClick} className="rounded bg-gray-200 p-2">
