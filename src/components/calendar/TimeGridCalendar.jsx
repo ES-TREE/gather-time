@@ -20,6 +20,8 @@ const getMonday = (date) => {
 const TimeGrid = () => {
   const [currentWeek, setCurrentWeek] = useState(0)
   const [selectedSlots, setSelectedSlots] = useState(new Set())
+  const [isDragging, setIsDragging] = useState(false)
+  const [lastTouchedSlot, setLastTouchedSlot] = useState(null) // 마지막으로 터치한 슬롯 저장
 
   const today = new Date()
   const startOfWeek = getMonday(
@@ -152,7 +154,38 @@ const TimeGrid = () => {
                           !isDisabled &&
                           handleSlotToggle(slotKey, fullDate, hour, minute)
                         }
-                      ></div>
+                        onTouchStart={() => {
+                          if (!isDisabled) {
+                            setIsDragging(true)
+                            handleSlotToggle(slotKey, fullDate, hour, minute)
+                            setLastTouchedSlot(slotKey) // 터치 시작한 슬롯 저장
+                          }
+                        }}
+                        onTouchMove={(e) => {
+                          if (isDragging && !isDisabled) {
+                            const touch = e.touches[0]
+                            const target = document.elementFromPoint(
+                              touch.clientX,
+                              touch.clientY,
+                            )
+
+                            if (
+                              target &&
+                              target.dataset.slotKey &&
+                              target.dataset.slotKey !== lastTouchedSlot // 이전 슬롯과 다를 때만 실행
+                            ) {
+                              handleSlotToggle(
+                                target.dataset.slotKey,
+                                fullDate,
+                                hour,
+                                minute,
+                              )
+                              setLastTouchedSlot(target.dataset.slotKey) // 새로운 슬롯 저장
+                            }
+                          }
+                        }}
+                        data-slot-key={slotKey}
+                      />
                     )
                   })}
                 </React.Fragment>
