@@ -154,11 +154,43 @@ const TimeGrid = () => {
                           !isDisabled &&
                           handleSlotToggle(slotKey, fullDate, hour, minute)
                         }
-                        onTouchStart={() => {
+                        onTouchStart={(e) => {
                           if (!isDisabled) {
-                            setIsDragging(true)
-                            handleSlotToggle(slotKey, fullDate, hour, minute)
-                            setLastTouchedSlot(slotKey) // 터치 시작한 슬롯 저장
+                            const touchStartTime = Date.now() // 터치 시작 시간 저장
+
+                            // 짧은 터치(클릭)인지 확인하는 타이머 설정
+                            const touchTimeout = setTimeout(() => {
+                              setIsDragging(true) // 일정 시간 지나면 드래그 모드 활성화
+                            }, 10) // 10ms 이상이면 드래그 모드로 전환
+
+                            // 터치가 끝나면 단일 선택 처리
+                            const handleTouchEnd = () => {
+                              clearTimeout(touchTimeout) // 타이머 정리
+
+                              if (Date.now() - touchStartTime < 10) {
+                                // 10ms 이하의 터치는 단일 선택/해제
+                                setSelectedSlots((prev) => {
+                                  const newSlots = new Set(prev)
+                                  if (newSlots.has(slotKey)) {
+                                    newSlots.delete(slotKey) // 이미 선택된 슬롯이면 해제
+                                  } else {
+                                    newSlots.add(slotKey) // 선택되지 않았다면 추가
+                                  }
+                                  return newSlots
+                                })
+                              }
+
+                              setIsDragging(false) // 드래그 모드 해제
+                              document.removeEventListener(
+                                "touchend",
+                                handleTouchEnd,
+                              )
+                            }
+
+                            document.addEventListener(
+                              "touchend",
+                              handleTouchEnd,
+                            ) // 터치 종료 이벤트 추가
                           }
                         }}
                         onTouchMove={(e) => {
