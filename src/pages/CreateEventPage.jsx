@@ -3,9 +3,9 @@ import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import FixedBottomButton from "../components/button/FixedBottomButton"
 import DateRangeCalendar from "../components/calendar/DateRangeCalendar"
+import TimeGridCalendar from "../components/calendar/TimeGridCalendar"
 import Input from "../components/common/Input"
 import supabase from "../libs/supabase"
-import TimeGridCalendar from "../components/calendar/TimeGridCalendar"
 
 export default function CreateEventPage() {
   const navigate = useNavigate()
@@ -49,10 +49,9 @@ export default function CreateEventPage() {
 
   return (
     <>
-    <div className="p-10">
-      <h1 className="text-xl font-bold mb-4">TimeGrid 캘린더</h1>
-      <TimeGridCalendar />
-    </div>
+      <div className="mb-5">
+        <TimeGridCalendar />
+      </div>
 
       <form className="flex flex-col space-y-5" onSubmit={handleCreateEvent}>
         <Input
