@@ -1,9 +1,9 @@
 import PropTypes from "prop-types"
 import { useState } from "react"
 import FixedBottomButton from "../button/FixedBottomButton"
-import HeatmapCalendar from "../calendar/HeatmapCalendar"
 import TimeGrid from "../calendar/TimeGridCalendar"
 import Tab from "../common/Tab"
+import RankingTopThree from "../list/RankingTopThree"
 
 CalendarView.propTypes = {
   eventInfo: PropTypes.shape({
@@ -14,29 +14,19 @@ CalendarView.propTypes = {
 
 export default function CalendarView({ eventInfo }) {
   // ! mock data
+  // TODO 9:30분부터 시작이면 9.5로 저장
+  const startHour = 9
+  const endHour = 21
   // 참여 가능 날짜
-  const startDate = new Date(2025, 2, 1)
-  const endDate = new Date(2025, 4, 31)
+  const registrationStart = new Date(2025, 2, 10)
+  const registrationEnd = new Date(2025, 3, 20)
   // 전체 참여자
   const totalVotes = 5
-  // 참여자들이 선택한 날짜와 선택한 인원 수
-  const selectedDates = [
-    {
-      date: new Date(2025, 2, 5),
-      votes: 2,
-    },
-    {
-      date: new Date(2025, 2, 15),
-      votes: 4,
-    },
-    {
-      date: new Date(2025, 3, 2),
-      votes: 1,
-    },
-    {
-      date: new Date(2025, 4, 22),
-      votes: 5,
-    },
+  // Top3 날짜
+  const topThreeDates = [
+    { id: 1, date: "25년 3월 19일 10:00", votes: 4 },
+    { id: 2, date: "25년 3월 29일 21:30", votes: 3 },
+    { id: 3, date: "25년 4월 2일 16:30", votes: 2 },
   ]
 
   const tabs = [
@@ -54,12 +44,10 @@ export default function CalendarView({ eventInfo }) {
             </div>
 
             <TimeGrid
-              // ! mock 데이터
-              // TODO 9:30분부터 시작이면 9.5로 저장
-              start_hour={9}
-              end_hours={21}
-              registration_start={new Date(2025, 2, 10)}
-              registration_end={new Date(2025, 3, 10)}
+              startHour={startHour}
+              endHour={endHour}
+              registrationStart={registrationStart}
+              registrationEnd={registrationEnd}
             />
           </section>
 
@@ -72,12 +60,28 @@ export default function CalendarView({ eventInfo }) {
       label: "조회",
       jsx: (
         <>
-          <HeatmapCalendar
-            startDate={startDate}
-            endDate={endDate}
-            totalVotes={totalVotes}
-            selectedDates={selectedDates}
-          />
+          <section className="space-y-2">
+            <div className="space-y-1">
+              <h2 className="font-bold">총 {totalVotes}명 참여</h2>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-sm text-stone-500">
+                만날 가능성이 높은 날짜 순으로 보여줘요
+              </p>
+              <RankingTopThree
+                title="확실히 되는 시간 TOP 3"
+                rankings={topThreeDates}
+              />
+            </div>
+
+            <TimeGrid
+              startHour={startHour}
+              endHour={endHour}
+              registrationStart={registrationStart}
+              registrationEnd={registrationEnd}
+            />
+          </section>
         </>
       ),
     },

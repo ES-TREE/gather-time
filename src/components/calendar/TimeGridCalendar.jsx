@@ -5,10 +5,10 @@ import { useSwipeable } from "react-swipeable"
 import { getMonday } from "../../utils/date"
 
 TimeGrid.propTypes = {
-  start_hour: PropTypes.number,
-  end_hours: PropTypes.number,
-  registration_start: PropTypes.string,
-  registration_end: PropTypes.string,
+  startHour: PropTypes.number,
+  endHour: PropTypes.number,
+  registrationStart: PropTypes.string,
+  registrationEnd: PropTypes.string,
 }
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
@@ -17,14 +17,14 @@ const NOW = Date.now() // 현재 시간
 const TODAY = new Date()
 
 export default function TimeGrid({
-  start_hour = 8,
-  end_hours = 20,
-  registration_start = new Date(
+  startHour = 8,
+  endHour = 20,
+  registrationStart = new Date(
     TODAY.getFullYear(),
     TODAY.getMonth(),
     TODAY.getDate(),
   ),
-  registration_end = null,
+  registrationEnd = null,
 }) {
   const [currentWeek, setCurrentWeek] = useState(0)
   const [selectedSlots, setSelectedSlots] = useState(new Set())
@@ -60,8 +60,8 @@ export default function TimeGrid({
       minute,
     )
     if (
-      slotDateTime >= registration_start &&
-      slotDateTime <= registration_end &&
+      slotDateTime >= registrationStart &&
+      slotDateTime <= registrationEnd &&
       slotDateTime >= NOW
     ) {
       setSelectedSlots((prev) => {
@@ -119,9 +119,9 @@ export default function TimeGrid({
         <div className="grid select-none grid-cols-8 overflow-auto">
           {/* Time Grid */}
           {Array.from(
-            { length: (end_hours - start_hour) * (60 / SLOT_INTERVAL) },
+            { length: (endHour - startHour) * (60 / SLOT_INTERVAL) },
             (_, i) => {
-              const hour = start_hour + Math.floor(i / (60 / SLOT_INTERVAL))
+              const hour = startHour + Math.floor(i / (60 / SLOT_INTERVAL))
               const minute = (i % (60 / SLOT_INTERVAL)) * SLOT_INTERVAL
               const timeLabel = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
               return (
@@ -141,8 +141,8 @@ export default function TimeGrid({
                       minute,
                     )
                     const isDisabled =
-                      slotDateTime < registration_start ||
-                      slotDateTime > registration_end ||
+                      slotDateTime < registrationStart ||
+                      slotDateTime > registrationEnd ||
                       slotDateTime < NOW
                     return (
                       <div
