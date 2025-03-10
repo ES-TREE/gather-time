@@ -1,5 +1,6 @@
 import PropTypes from "prop-types"
 import { useState } from "react"
+import { formatToYYMMDD } from "../../utils/date"
 import FixedBottomButton from "../button/FixedBottomButton"
 import TimeGrid from "../calendar/TimeGridCalendar"
 import Tab from "../common/Tab"
@@ -61,13 +62,19 @@ export default function CalendarView({ eventInfo }) {
       jsx: (
         <>
           <section className="space-y-2">
-            <div className="space-y-1">
-              <h2 className="font-bold">총 {totalVotes}명 참여</h2>
+            <div className="flex items-center justify-between font-semibold">
+              <h2>
+                {formatToYYMMDD(registrationStart)} ~{" "}
+                {formatToYYMMDD(registrationEnd)}
+              </h2>
+              <h3>
+                총 <span className="text-primary-400">{totalVotes}</span>명 참여
+              </h3>
             </div>
 
             <div className="space-y-1">
               <p className="text-sm text-stone-500">
-                만날 가능성이 높은 날짜 순으로 보여줘요
+                만날 가능성이 높은 날짜 순으로 보여줘요.
               </p>
               <RankingTopThree
                 title="확실히 되는 시간 TOP 3"
@@ -91,7 +98,9 @@ export default function CalendarView({ eventInfo }) {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-lg font-bold">{eventInfo.title}</h2>
+      <h2 className="text-lg font-bold">
+        {eventInfo.title} {currentTab === "view" && "투표 결과"}
+      </h2>
 
       <Tab tabs={tabs} currentTab={currentTab} onChangeTab={setCurrentTab} />
     </div>
