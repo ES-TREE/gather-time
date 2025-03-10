@@ -83,7 +83,7 @@ export default function LoginView({ eventInfo, setParticipantInfo }) {
       })
     } else {
       // 신규 유저는 종료 이벤트 로그인 불가
-      if (Date.now() < eventEndDate){
+      if (eventEndDate < Date.now()){
         // 실패
         toast("종료된 이벤트이므로 신규 유저는 로그인할 수 없습니다.", {
           icon: "❌",
