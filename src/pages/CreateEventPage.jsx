@@ -3,7 +3,6 @@ import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import FixedBottomButton from "../components/button/FixedBottomButton"
 import DateRangeCalendar from "../components/calendar/DateRangeCalendar"
-import TimeGridCalendar from "../components/calendar/TimeGridCalendar"
 import Input from "../components/common/Input"
 import supabase from "../libs/supabase"
 
@@ -49,10 +48,6 @@ export default function CreateEventPage() {
 
   return (
     <>
-      <div className="mb-5">
-        <TimeGridCalendar />
-      </div>
-
       <form className="flex flex-col space-y-5" onSubmit={handleCreateEvent}>
         <Input
           value={eventName}
