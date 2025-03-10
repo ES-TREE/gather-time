@@ -32,6 +32,8 @@ export default function EventPage() {
     setEventInfo({
       id: data.id,
       title: data.title,
+      endDate: data.end_date,
+      endTime: data.end_time
     })
   }
 

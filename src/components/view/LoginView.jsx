@@ -10,6 +10,8 @@ LoginView.propTypes = {
   eventInfo: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
+    endDate: PropTypes.string,
+    endTime: PropTypes.string,
   }),
   setParticipantInfo: PropTypes.func.isRequired,
 }
@@ -17,6 +19,7 @@ LoginView.propTypes = {
 export default function LoginView({ eventInfo, setParticipantInfo }) {
   const [participantName, setParticipantName] = useState("")
   const [password, setPassword] = useState("")
+  const eventEndDate = new Date(`${eventInfo.endDate}T${eventInfo.endTime}`)
 
   // 링크 복사하기
   const copyUrlLink = () => {
@@ -79,6 +82,15 @@ export default function LoginView({ eventInfo, setParticipantInfo }) {
         participantName: existUser.participant_name,
       })
     } else {
+      // 신규 유저는 종료 이벤트 로그인 불가
+      if (Date.now() < eventEndDate){
+        // 실패
+        toast("종료된 이벤트이므로 신규 유저는 로그인할 수 없습니다.", {
+          icon: "❌",
+        })
+        return
+      }
+
       // * 회원가입
       const { data: newUser } = await supabase
         .from("participants")
@@ -104,7 +116,10 @@ export default function LoginView({ eventInfo, setParticipantInfo }) {
         <section className="text-center">
           <h2 className="text-lg font-bold">{eventInfo.title}</h2>
           <p className="text-sm text-stone-500">
-            로그인 안내와 이름, 비밀번호 찾기 불가능한점 안내
+            1. 로그인 이름, 비밀번호 찾기 불가능한점 안내
+          </p>
+          <p className="text-sm text-stone-500">
+            2. 종료된 이벤트는 기존 참가 등록자만 조회 가능하다는 안내
           </p>
         </section>
 
