@@ -5,6 +5,7 @@ import supabase from "../../libs/supabase"
 import FixedBottomButton from "../button/FixedBottomButton"
 import Button from "../common/Button"
 import Input from "../common/Input"
+import NotFoundView from "./NotFoundView"
 
 LoginView.propTypes = {
   eventInfo: PropTypes.shape({
@@ -20,6 +21,10 @@ export default function LoginView({ eventInfo, setParticipantInfo }) {
   const [participantName, setParticipantName] = useState("")
   const [password, setPassword] = useState("")
   const eventEndDate = new Date(`${eventInfo.endDate}T${eventInfo.endTime}`)
+
+  if (!eventInfo || !eventInfo?.id) {
+    return <NotFoundView />
+  }
 
   // 링크 복사하기
   const copyUrlLink = () => {
@@ -83,7 +88,7 @@ export default function LoginView({ eventInfo, setParticipantInfo }) {
       })
     } else {
       // 신규 유저는 종료 이벤트 로그인 불가
-      if (eventEndDate < Date.now()){
+      if (eventEndDate < Date.now()) {
         // 실패
         toast("종료된 이벤트이므로 신규 유저는 로그인할 수 없습니다.", {
           icon: "❌",

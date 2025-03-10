@@ -29,11 +29,15 @@ export default function EventPage() {
       .eq("uuid", uuid)
       .single()
 
+    if (!data) {
+      return
+    }
+
     setEventInfo({
-      id: data.id,
-      title: data.title,
-      endDate: data.end_date,
-      endTime: data.end_time
+      id: data?.id,
+      title: data?.title,
+      endDate: data?.end_date,
+      endTime: data?.end_time,
     })
   }
 
