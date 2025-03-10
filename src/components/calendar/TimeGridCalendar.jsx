@@ -1,23 +1,31 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import PropTypes from "prop-types"
 import React, { useCallback, useState } from "react"
 import { useSwipeable } from "react-swipeable"
+import { getMonday } from "../../utils/date"
 
-const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
-const START_HOUR = 8 // 08:00
-const END_HOUR = 20 // 20:00
-const SLOT_INTERVAL = 30 // 일정 30분 단위로 등록
-const REGISTRATION_START = new Date(2025, 2, 9) // 2025년 3월 9일
-const REGISTRATION_END = new Date(2025, 3, 9) // 2025년 4월 9일
-const NOW = Date.now() // 현재 시간
-
-const getMonday = (date) => {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-  return new Date(d.setDate(diff))
+TimeGrid.propTypes = {
+  start_hour: PropTypes.number,
+  end_hours: PropTypes.number,
+  registration_start: PropTypes.string,
+  registration_end: PropTypes.string,
 }
 
-const TimeGrid = () => {
+const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
+const SLOT_INTERVAL = 30 // 일정 30분 단위로 등록
+const NOW = Date.now() // 현재 시간
+const TODAY = new Date()
+
+export default function TimeGrid({
+  start_hour = 8,
+  end_hours = 20,
+  registration_start = new Date(
+    TODAY.getFullYear(),
+    TODAY.getMonth(),
+    TODAY.getDate(),
+  ),
+  registration_end = null,
+}) {
   const [currentWeek, setCurrentWeek] = useState(0)
   const [selectedSlots, setSelectedSlots] = useState(new Set())
   const [isDragging, setIsDragging] = useState(false)
@@ -43,10 +51,6 @@ const TimeGrid = () => {
     onSwipedRight: () => setCurrentWeek((prev) => prev - 1),
   })
 
-  const handleTodayClick = () => {
-    setCurrentWeek(0)
-  }
-
   const handleSlotToggle = useCallback((slot, date, hour, minute) => {
     const slotDateTime = new Date(
       date.getFullYear(),
@@ -56,8 +60,8 @@ const TimeGrid = () => {
       minute,
     )
     if (
-      slotDateTime >= REGISTRATION_START &&
-      slotDateTime <= REGISTRATION_END &&
+      slotDateTime >= registration_start &&
+      slotDateTime <= registration_end &&
       slotDateTime >= NOW
     ) {
       setSelectedSlots((prev) => {
@@ -73,7 +77,7 @@ const TimeGrid = () => {
   }, [])
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-2">
       {/* Weekly Navigator */}
       <div className="flex w-full items-center justify-between">
         <button
@@ -115,9 +119,9 @@ const TimeGrid = () => {
         <div className="grid select-none grid-cols-8 overflow-auto">
           {/* Time Grid */}
           {Array.from(
-            { length: (END_HOUR - START_HOUR) * (60 / SLOT_INTERVAL) },
+            { length: (end_hours - start_hour) * (60 / SLOT_INTERVAL) },
             (_, i) => {
-              const hour = START_HOUR + Math.floor(i / (60 / SLOT_INTERVAL))
+              const hour = start_hour + Math.floor(i / (60 / SLOT_INTERVAL))
               const minute = (i % (60 / SLOT_INTERVAL)) * SLOT_INTERVAL
               const timeLabel = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
               return (
@@ -137,8 +141,8 @@ const TimeGrid = () => {
                       minute,
                     )
                     const isDisabled =
-                      slotDateTime < REGISTRATION_START ||
-                      slotDateTime > REGISTRATION_END ||
+                      slotDateTime < registration_start ||
+                      slotDateTime > registration_end ||
                       slotDateTime < NOW
                     return (
                       <div
@@ -154,7 +158,7 @@ const TimeGrid = () => {
                           !isDisabled &&
                           handleSlotToggle(slotKey, fullDate, hour, minute)
                         }
-                        onTouchStart={(e) => {
+                        onTouchStart={() => {
                           if (!isDisabled) {
                             const touchStartTime = Date.now() // 터치 시작 시간 저장
 
@@ -229,5 +233,3 @@ const TimeGrid = () => {
     </div>
   )
 }
-
-export default TimeGrid

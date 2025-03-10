@@ -1,8 +1,8 @@
 import PropTypes from "prop-types"
 import { useState } from "react"
 import FixedBottomButton from "../button/FixedBottomButton"
-import DateRangeCalendar from "../calendar/DateRangeCalendar"
 import HeatmapCalendar from "../calendar/HeatmapCalendar"
+import TimeGrid from "../calendar/TimeGridCalendar"
 import Tab from "../common/Tab"
 
 CalendarView.propTypes = {
@@ -45,7 +45,7 @@ export default function CalendarView({ eventInfo }) {
       label: "입력",
       jsx: (
         <>
-          <section>
+          <section className="space-y-2">
             <div className="space-y-1">
               <h2 className="font-bold">일정 선택</h2>
               <p className="text-sm text-stone-500">
@@ -53,7 +53,14 @@ export default function CalendarView({ eventInfo }) {
               </p>
             </div>
 
-            <DateRangeCalendar />
+            <TimeGrid
+              // ! mock 데이터
+              // TODO 9:30분부터 시작이면 9.5로 저장
+              start_hour={9}
+              end_hours={21}
+              registration_start={new Date(2025, 2, 10)}
+              registration_end={new Date(2025, 3, 10)}
+            />
           </section>
 
           <FixedBottomButton>초기화</FixedBottomButton>
