@@ -2,7 +2,8 @@ import PropTypes from "prop-types"
 import { useState } from "react"
 import { formatToYYMMDD } from "../../utils/date"
 import FixedBottomButton from "../button/FixedBottomButton"
-import TimeGrid from "../calendar/TimeGridCalendar"
+import EditTimeGrid from "../calendar/EditTimeGrid"
+import ViewTimeGrid from "../calendar/ViewTimeGrid"
 import Tab from "../common/Tab"
 import RankingTopThree from "../list/RankingTopThree"
 
@@ -44,7 +45,7 @@ export default function CalendarView({ eventInfo }) {
               </p>
             </div>
 
-            <TimeGrid
+            <EditTimeGrid
               startHour={startHour}
               endHour={endHour}
               registrationStart={registrationStart}
@@ -82,11 +83,10 @@ export default function CalendarView({ eventInfo }) {
               />
             </div>
 
-            <TimeGrid
+            <ViewTimeGrid
               startHour={startHour}
               endHour={endHour}
-              registrationStart={registrationStart}
-              registrationEnd={registrationEnd}
+              selectedSlots={null}
             />
           </section>
         </>
