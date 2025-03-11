@@ -40,9 +40,7 @@ export default function CreateEventPage() {
       .select()
       .single()
     const eventUuid = result.data.uuid
-    toast("이벤트를 생성했어요.", {
-      icon: "✅",
-    })
+    toast.success("이벤트를 생성했어요.")
     navigate(`/${eventUuid}`)
   }
 

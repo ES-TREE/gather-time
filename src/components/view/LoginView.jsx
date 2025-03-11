@@ -36,9 +36,7 @@ export default function LoginView({ loading, eventInfo, setParticipantInfo }) {
   const copyUrlLink = () => {
     try {
       navigator.clipboard.writeText(window.location.href)
-      toast("링크를 복사했어요.", {
-        icon: "✅",
-      })
+      toast.success("링크를 복사했어요.")
     } catch (err) {
       console.error("링크 복사 실패: ", err)
     }
@@ -49,9 +47,7 @@ export default function LoginView({ loading, eventInfo, setParticipantInfo }) {
     e.preventDefault()
 
     if (!eventInfo.id) {
-      toast("오류가 발생했어요. 새로고침을 해주세요.", {
-        icon: "⚠️",
-      })
+      toast.error("오류가 발생했어요. 새로고침을 해주세요.")
       return
     }
 
@@ -81,9 +77,7 @@ export default function LoginView({ loading, eventInfo, setParticipantInfo }) {
       // 비밀번호 확인
       if (existUser.password != password) {
         // 실패
-        toast("비밀번호를 다시 입력하세요.", {
-          icon: "❌",
-        })
+        toast.error("비밀번호를 다시 입력하세요.")
         return
       }
 
@@ -96,9 +90,7 @@ export default function LoginView({ loading, eventInfo, setParticipantInfo }) {
       // 신규 유저는 종료 이벤트 로그인 불가
       if (eventEndDate < Date.now()) {
         // 실패
-        toast("종료된 이벤트이므로 신규 유저는 로그인할 수 없습니다.", {
-          icon: "❌",
-        })
+        toast.error("종료된 이벤트이므로 신규 유저는 로그인할 수 없습니다.")
         return
       }
 
