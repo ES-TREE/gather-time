@@ -19,6 +19,7 @@ export default function CalendarView({ eventInfo }) {
   // TODO 9:30분부터 시작이면 9.5로 저장
   const startHour = 9
   const endHour = 21
+  const selectedSlots = ""
   // 참여 가능 날짜
   const registrationStart = new Date(2025, 2, 10)
   const registrationEnd = new Date(2025, 3, 20)
@@ -83,11 +84,7 @@ export default function CalendarView({ eventInfo }) {
               />
             </div>
 
-            <ViewTimeGrid
-              startHour={startHour}
-              endHour={endHour}
-              selectedSlots={null}
-            />
+            <ViewTimeGrid startHour={startHour} endHour={endHour} />
           </section>
         </>
       ),
