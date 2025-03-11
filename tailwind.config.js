@@ -18,6 +18,12 @@ export default {
           950: "#07271b",
         },
       },
+      keyframes: {
+        rotation: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
     },
   },
   plugins: [],

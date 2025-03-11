@@ -20,25 +20,32 @@ export default function EventPage() {
     id: null,
     participantName: null,
   })
+  const [loading, setLoading] = useState(true)
 
   // 이벤트 정보 가져오기
   const fetchEventInfo = async () => {
-    const { data } = await supabase
-      .from("events")
-      .select("*")
-      .eq("uuid", uuid)
-      .single()
+    try {
+      const { data } = await supabase
+        .from("events")
+        .select("*")
+        .eq("uuid", uuid)
+        .single()
 
-    if (!data) {
-      return
+      if (!data) {
+        return
+      }
+
+      setEventInfo({
+        id: data?.id,
+        title: data?.title,
+        endDate: data?.end_date,
+        endTime: data?.end_time,
+      })
+    } catch (err) {
+      console.log(err.message)
+    } finally {
+      setLoading(false)
     }
-
-    setEventInfo({
-      id: data?.id,
-      title: data?.title,
-      endDate: data?.end_date,
-      endTime: data?.end_time,
-    })
   }
 
   useEffect(() => {
@@ -48,6 +55,10 @@ export default function EventPage() {
   return participantInfo.id ? (
     <CalendarView eventInfo={eventInfo} />
   ) : (
-    <LoginView eventInfo={eventInfo} setParticipantInfo={setParticipantInfo} />
+    <LoginView
+      loading={loading}
+      eventInfo={eventInfo}
+      setParticipantInfo={setParticipantInfo}
+    />
   )
 }

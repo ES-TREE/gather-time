@@ -5,9 +5,11 @@ import supabase from "../../libs/supabase"
 import FixedBottomButton from "../button/FixedBottomButton"
 import Button from "../common/Button"
 import Input from "../common/Input"
+import Loader from "../common/Loader"
 import NotFoundView from "./NotFoundView"
 
 LoginView.propTypes = {
+  loading: PropTypes.bool,
   eventInfo: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
@@ -17,10 +19,14 @@ LoginView.propTypes = {
   setParticipantInfo: PropTypes.func.isRequired,
 }
 
-export default function LoginView({ eventInfo, setParticipantInfo }) {
+export default function LoginView({ loading, eventInfo, setParticipantInfo }) {
   const [participantName, setParticipantName] = useState("")
   const [password, setPassword] = useState("")
   const eventEndDate = new Date(`${eventInfo.endDate}T${eventInfo.endTime}`)
+
+  if (loading) {
+    return <Loader />
+  }
 
   if (!eventInfo || !eventInfo?.id) {
     return <NotFoundView />
