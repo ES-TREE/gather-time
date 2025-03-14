@@ -92,10 +92,6 @@ export default function TimeGrid({
         >
           <ChevronRight />
         </button>
-
-        {/* <button onClick={handleTodayClick} className="rounded bg-gray-200 p-2">
-          오늘
-        </button> */}
       </div>
       {/* Weekly Calendar Grid */}
       <div>
