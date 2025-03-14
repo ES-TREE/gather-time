@@ -11,18 +11,23 @@ CalendarView.propTypes = {
   eventInfo: PropTypes.shape({
     id: PropTypes.number,
     title: PropTypes.string,
+    startDate: PropTypes.Date,
+    endDate: PropTypes.Date,
+    startTime: PropTypes.string,
+    endTime: PropTypes.string,
   }),
 }
 
 export default function CalendarView({ eventInfo }) {
-  // ! mock data
+  // TimeGrid 시작 시간 종료 시간
   // TODO 9:30분부터 시작이면 9.5로 저장
-  const startHour = 9
-  const endHour = 21
-  const selectedSlots = ""
-  // 참여 가능 날짜
-  const registrationStart = new Date(2025, 2, 10)
-  const registrationEnd = new Date(2025, 3, 20)
+  const startHour = eventInfo.startTime.split(":")[0] - 0
+  const endHour = eventInfo.endTime.split(":")[0] - 0
+  // 선택 가능한 이벤트 시작 일자 종료 일자
+  const registrationStart = new Date(eventInfo.startDate)
+  const registrationEnd = new Date(eventInfo.endDate)
+
+  // ! mock data
   // 전체 참여자
   const totalVotes = 5
   // Top3 날짜
@@ -84,7 +89,12 @@ export default function CalendarView({ eventInfo }) {
               />
             </div>
 
-            <ViewTimeGrid startHour={startHour} endHour={endHour} />
+            <ViewTimeGrid
+              startHour={startHour}
+              endHour={endHour}
+              registrationStart={registrationStart}
+              registrationEnd={registrationEnd}
+            />
           </section>
         </>
       ),
@@ -98,7 +108,6 @@ export default function CalendarView({ eventInfo }) {
       <h2 className="text-lg font-bold">
         {eventInfo.title} {currentTab === "view" && "투표 결과"}
       </h2>
-
       <Tab tabs={tabs} currentTab={currentTab} onChangeTab={setCurrentTab} />
     </div>
   )

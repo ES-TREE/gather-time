@@ -7,6 +7,8 @@ import { getMonday } from "../../utils/date"
 ViewTimeGrid.propTypes = {
   startHour: PropTypes.number,
   endHour: PropTypes.number,
+  registrationStart: PropTypes.string,
+  registrationEnd: PropTypes.string,
   selectedSlots: PropTypes.instanceOf(Set),
 }
 
@@ -24,8 +26,11 @@ const MOCK_SELECTED_SLOTS = new Set([
 ])
 
 export default function ViewTimeGrid({
-  startHour = 8,
-  endHour = 20,
+  startHour,
+  endHour,
+  // TODO 이벤트 범위 외 주 이동 불가하게 수정
+  registrationStart,
+  registrationEnd,
   selectedSlots = MOCK_SELECTED_SLOTS,
 }) {
   const [currentWeek, setCurrentWeek] = useState(0)

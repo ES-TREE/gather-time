@@ -13,8 +13,12 @@ export default function EventPage() {
   const { uuid } = useParams()
 
   const [eventInfo, setEventInfo] = useState({
-    id: null,
-    title: null,
+    id: 0,
+    title: "",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
   })
   const [participantInfo, setParticipantInfo] = useState({
     id: null,
@@ -38,7 +42,9 @@ export default function EventPage() {
       setEventInfo({
         id: data?.id,
         title: data?.title,
+        startDate: data?.start_date,
         endDate: data?.end_date,
+        startTime: data?.start_time,
         endTime: data?.end_time,
       })
     } catch (err) {

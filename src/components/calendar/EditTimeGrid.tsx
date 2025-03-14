@@ -16,14 +16,11 @@ const SLOT_INTERVAL = 30 // 일정 30분 단위로 등록
 const TODAY = new Date()
 
 export default function TimeGrid({
-  startHour = 8,
-  endHour = 20,
-  registrationStart = new Date(
-    TODAY.getFullYear(),
-    TODAY.getMonth(),
-    TODAY.getDate(),
-  ),
-  registrationEnd = null,
+  startHour,
+  endHour,
+  // TODO 이벤트 범위 외 주 이동 불가하게 수정
+  registrationStart,
+  registrationEnd,
 }) {
   const [currentWeek, setCurrentWeek] = useState(0)
   const [selectedSlots, setSelectedSlots] = useState(new Set())
