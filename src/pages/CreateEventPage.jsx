@@ -11,6 +11,10 @@ export default function CreateEventPage() {
 
   // 이벤트 이름
   const [eventName, setEventName] = useState("")
+  // 이벤트 시작 시간
+  const [startTime, setStartTime] = useState("08:00")
+  // 이벤트 종료 시간
+  const [endTime, setEndTime] = useState("23:59")
   // 캘린더 시작 날짜, 종료 날짜
   const [dateRange, setDateRange] = useState([])
 
@@ -29,19 +33,40 @@ export default function CreateEventPage() {
       })
       return
     }
-
-    const result = await supabase
-      .from("events")
-      .insert({
-        title: eventName,
-        start_date: dateRange[0],
-        end_date: dateRange[1],
+    if (!startTime || !endTime) {
+      toast("이벤트 시작 시간과 종료 시간을 입력해주세요.", {
+        icon: "⚠️",
       })
-      .select()
-      .single()
-    const eventUuid = result.data.uuid
-    toast.success("이벤트를 생성했어요.")
-    navigate(`/${eventUuid}`)
+      return
+    }
+    if (startTime >= endTime) {
+      toast("이벤트 종료 시간은 시작 시간보다 늦어야 합니다.", {
+        icon: "⚠️",
+      })
+      return
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("events")
+        .insert({
+          title: eventName,
+          start_date: dateRange[0],
+          end_date: dateRange[1],
+          start_time: startTime,
+          end_time: endTime,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      toast.success("이벤트를 생성했어요!")
+      navigate(`/${data.uuid}`)
+    } catch (err) {
+      toast.error("이벤트 생성에 실패했어요. 다시 시도해주세요.")
+      console.error("Supabase Insert Error:", err)
+    }
   }
 
   return (
@@ -52,6 +77,22 @@ export default function CreateEventPage() {
           onChange={(e) => setEventName(e.target.value)}
           label="이벤트 이름"
           placeholder="이벤트 이름을 입력해주세요."
+        />
+
+        <Input
+          type="time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          label="이벤트 시작 시간"
+          placeholder="이벤트 시작 시간을 입력해주세요."
+        />
+
+        <Input
+          type="time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          label="이벤트 종료 시간"
+          placeholder="이벤트 종료 시간을 입력해주세요."
         />
 
         <section>
