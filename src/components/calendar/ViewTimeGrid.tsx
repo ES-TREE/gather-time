@@ -35,9 +35,8 @@ export default function ViewTimeGrid({
 }) {
   const [currentWeek, setCurrentWeek] = useState(0)
 
-  const today = new Date()
   const startOfWeek = getMonday(
-    new Date(today.setDate(today.getDate() + currentWeek * 7)),
+    new Date(TODAY.setDate(TODAY.getDate() + currentWeek * 7)),
   )
   const formattedDays = DAYS.map((_, i) => {
     const d = new Date(startOfWeek)
@@ -66,8 +65,8 @@ export default function ViewTimeGrid({
           <ChevronLeft />
         </button>
         <h2 className="text-lg font-bold">
-          {today.getFullYear()}년{" "}
-          {String(today.getMonth() + 1).padStart(2, "0")}월
+          {TODAY.getFullYear()}년{" "}
+          {String(TODAY.getMonth() + 1).padStart(2, "0")}월
         </h2>
         <button
           onClick={() => setCurrentWeek(currentWeek + 1)}
