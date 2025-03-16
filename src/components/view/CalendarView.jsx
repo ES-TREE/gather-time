@@ -20,20 +20,22 @@ CalendarView.propTypes = {
 }
 
 export default function CalendarView({ eventInfo, participantId }) {
-  const [timegridInfo, setTimegridInfo] = useState({
-    // TimeGrid 시작 시간 종료 시간
-    // TODO 9:30분부터 시작이면 9.5로 저장
-    startHour: eventInfo.startTime.split(":")[0] - 0,
-    endHour: eventInfo.endTime.split(":")[0] - 0,
-    // 선택 가능한 이벤트 시작 일자 종료 일자
-    registrationStart: new Date(eventInfo.startDate),
-    registrationEnd: new Date(eventInfo.endDate),
-  })
   const [availabilityInfo, setAvailabilityInfo] = useState({
     eventId: eventInfo.id,
     participantId: participantId,
     availableTimeslots: "",
   })
+
+  // 이벤트 정보
+  // ? 사용자와 상호작용 하는 데이터가 아니어서 상태가 아닌 객체로 변경
+  const timegridInfo = {
+    // TimeGrid 시작 시간 종료 시간
+    startHour: eventInfo.startTime.split(":")[0] - 0,
+    endHour: eventInfo.endTime.split(":")[0] - 0,
+    // 선택 가능한 이벤트 시작 일자 종료 일자
+    registrationStart: new Date(eventInfo.startDate),
+    registrationEnd: new Date(eventInfo.endDate),
+  }
 
   // ! mock data
   // 전체 참여자
@@ -77,8 +79,8 @@ export default function CalendarView({ eventInfo, participantId }) {
           <section className="space-y-2">
             <div className="flex items-center justify-between font-semibold">
               <h2>
-                {formatToYYMMDD(registrationStart)} ~{" "}
-                {formatToYYMMDD(registrationEnd)}
+                {formatToYYMMDD(timegridInfo?.registrationStart)} ~{" "}
+                {formatToYYMMDD(timegridInfo?.registrationEnd)}
               </h2>
               <h3>
                 총 <span className="text-primary-400">{totalVotes}</span>명 참여
@@ -96,10 +98,10 @@ export default function CalendarView({ eventInfo, participantId }) {
             </div>
 
             <ViewTimeGrid
-              startHour={startHour}
-              endHour={endHour}
-              registrationStart={registrationStart}
-              registrationEnd={registrationEnd}
+              startHour={timegridInfo?.startHour}
+              endHour={timegridInfo?.endHour}
+              registrationStart={timegridInfo?.registrationStart}
+              registrationEnd={timegridInfo?.registrationEnd}
             />
           </section>
         </>

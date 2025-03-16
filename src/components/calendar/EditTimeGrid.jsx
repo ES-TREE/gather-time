@@ -3,7 +3,6 @@ import PropTypes from "prop-types"
 import React, { useCallback, useState } from "react"
 import { useSwipeable } from "react-swipeable"
 import { getMonday } from "../../utils/date"
-import supabase from "../../libs/supabase"
 
 TimeGrid.propTypes = {
   timegridInfo: PropTypes.shape({
@@ -71,40 +70,40 @@ export default function TimeGrid({ timegridInfo, availabilityInfo }) {
         }
 
         // TODO DB 저장
-        try {
-          // 중복값 체크
-          const { data: existAvailability } = await supabase
-            .from("availabilities")
-            .select("id")
-            .eq("event_id", availabilityInfo.eventId)
-            .eq("participant_id", availabilityInfo.participantId)
-            .single()
+        // try {
+        //   // 중복값 체크
+        //   const { data: existAvailability } = await supabase
+        //     .from("availabilities")
+        //     .select("id")
+        //     .eq("event_id", availabilityInfo.eventId)
+        //     .eq("participant_id", availabilityInfo.participantId)
+        //     .single()
 
-          if (existAvailability) {
-            // 기존 timeslots 업데이트
-            const { data, error } = await supabase
-              .from("availabilities")
-              .update({ available_timeslots: newSlots })
-              .eq("id", existAvailability.id)
-            
-          } else {
-            // 신규 입력
-            const { data, error } = await supabase
-              .from("availabilities")
-              .insert({
-                event_id: availabilityInfo.eventId,
-                participant_id: availabilityInfo.participantId,
-                available_timeslots: newSlots,
-              })
-              .select()
-              .single()
-          }
-          if (error) throw error
-        } catch (err) {
-          console.error("Supabase Insert Error:", err)
-        }
+        //   if (existAvailability) {
+        //     // 기존 timeslots 업데이트
+        //     const { data, error } = await supabase
+        //       .from("availabilities")
+        //       .update({ available_timeslots: newSlots })
+        //       .eq("id", existAvailability.id)
 
-        return newSlots
+        //   } else {
+        //     // 신규 입력
+        //     const { data, error } = await supabase
+        //       .from("availabilities")
+        //       .insert({
+        //         event_id: availabilityInfo.eventId,
+        //         participant_id: availabilityInfo.participantId,
+        //         available_timeslots: newSlots,
+        //       })
+        //       .select()
+        //       .single()
+        //   }
+        //   if (error) throw error
+        // } catch (err) {
+        //   console.error("Supabase Insert Error:", err)
+        // }
+
+        // return newSlots
       })
     }
   }, [])
@@ -148,9 +147,14 @@ export default function TimeGrid({ timegridInfo, availabilityInfo }) {
         <div className="grid select-none grid-cols-8 overflow-auto">
           {/* Time Grid */}
           {Array.from(
-            { length: (endHour - startHour) * (60 / SLOT_INTERVAL) },
+            {
+              length:
+                (timegridInfo?.endHour - timegridInfo?.startHour) *
+                (60 / SLOT_INTERVAL),
+            },
             (_, i) => {
-              const hour = startHour + Math.floor(i / (60 / SLOT_INTERVAL))
+              const hour =
+                timegridInfo?.startHour + Math.floor(i / (60 / SLOT_INTERVAL))
               const minute = (i % (60 / SLOT_INTERVAL)) * SLOT_INTERVAL
               const timeLabel = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
               return (
@@ -170,8 +174,8 @@ export default function TimeGrid({ timegridInfo, availabilityInfo }) {
                       minute,
                     )
                     const isDisabled =
-                      slotDateTime < registrationStart ||
-                      slotDateTime > registrationEnd ||
+                      slotDateTime < timegridInfo?.registrationStart ||
+                      slotDateTime > timegridInfo?.registrationEnd ||
                       slotDateTime < TODAY
                     return (
                       <div
