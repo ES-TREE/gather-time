@@ -53,7 +53,7 @@ export default function CalendarView({ eventInfo, participantId }) {
       label: "입력",
       jsx: (
         <>
-          <section className="space-y-2">
+          <section className="space-y-2 pb-20">
             <div className="space-y-1">
               <h2 className="font-bold">일정 선택</h2>
               <p className="text-sm text-stone-500">
