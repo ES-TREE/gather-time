@@ -24,6 +24,10 @@ export default function EventPage() {
     id: null,
     participantName: null,
   })
+  const [availabilitiesInfo, setAvailabilitiesInfo] = useState({
+    eventId: null,
+    participantId: null,
+  })
   const [loading, setLoading] = useState(true)
 
   // 이벤트 정보 가져오기
@@ -59,7 +63,7 @@ export default function EventPage() {
   }, [uuid])
 
   return participantInfo.id ? (
-    <CalendarView eventInfo={eventInfo} />
+    <CalendarView eventInfo={eventInfo} participantId={participantInfo.id} />
   ) : (
     <LoginView
       loading={loading}

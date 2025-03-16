@@ -16,16 +16,24 @@ CalendarView.propTypes = {
     startTime: PropTypes.string,
     endTime: PropTypes.string,
   }),
+  participantId: PropTypes.number,
 }
 
-export default function CalendarView({ eventInfo }) {
-  // TimeGrid 시작 시간 종료 시간
-  // TODO 9:30분부터 시작이면 9.5로 저장
-  const startHour = eventInfo.startTime.split(":")[0] - 0
-  const endHour = eventInfo.endTime.split(":")[0] - 0
-  // 선택 가능한 이벤트 시작 일자 종료 일자
-  const registrationStart = new Date(eventInfo.startDate)
-  const registrationEnd = new Date(eventInfo.endDate)
+export default function CalendarView({ eventInfo, participantId }) {
+  const [timegridInfo, setTimegridInfo] = useState({
+    // TimeGrid 시작 시간 종료 시간
+    // TODO 9:30분부터 시작이면 9.5로 저장
+    startHour: eventInfo.startTime.split(":")[0] - 0,
+    endHour: eventInfo.endTime.split(":")[0] - 0,
+    // 선택 가능한 이벤트 시작 일자 종료 일자
+    registrationStart: new Date(eventInfo.startDate),
+    registrationEnd: new Date(eventInfo.endDate),
+  })
+  const [availabilityInfo, setAvailabilityInfo] = useState({
+    eventId: eventInfo.id,
+    participantId: participantId,
+    availableTimeslots: "",
+  })
 
   // ! mock data
   // 전체 참여자
@@ -52,10 +60,8 @@ export default function CalendarView({ eventInfo }) {
             </div>
 
             <EditTimeGrid
-              startHour={startHour}
-              endHour={endHour}
-              registrationStart={registrationStart}
-              registrationEnd={registrationEnd}
+              timegridInfo={timegridInfo}
+              availabilityInfo={availabilityInfo}
             />
           </section>
 

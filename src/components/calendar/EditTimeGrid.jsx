@@ -3,25 +3,27 @@ import PropTypes from "prop-types"
 import React, { useCallback, useState } from "react"
 import { useSwipeable } from "react-swipeable"
 import { getMonday } from "../../utils/date"
+import supabase from "../../libs/supabase"
 
 TimeGrid.propTypes = {
-  startHour: PropTypes.number,
-  endHour: PropTypes.number,
-  registrationStart: PropTypes.string,
-  registrationEnd: PropTypes.string,
+  timegridInfo: PropTypes.shape({
+    startHour: PropTypes.number,
+    endHour: PropTypes.number,
+    registrationStart: PropTypes.string,
+    registrationEnd: PropTypes.string,
+  }),
+  availabilityInfo: PropTypes.shape({
+    eventId: PropTypes.number,
+    participantId: PropTypes.number,
+    availableTimeslots: PropTypes.string,
+  }),
 }
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
 const SLOT_INTERVAL = 30 // 일정 30분 단위로 등록
 const TODAY = new Date()
 
-export default function TimeGrid({
-  startHour,
-  endHour,
-  // TODO 이벤트 범위 외 주 이동 불가하게 수정
-  registrationStart,
-  registrationEnd,
-}) {
+export default function TimeGrid({ timegridInfo, availabilityInfo }) {
   const [currentWeek, setCurrentWeek] = useState(0)
   const [selectedSlots, setSelectedSlots] = useState(new Set())
   const [isDragging, setIsDragging] = useState(false)
@@ -47,7 +49,7 @@ export default function TimeGrid({
     onSwipedRight: () => setCurrentWeek((prev) => prev - 1),
   })
 
-  const handleSlotToggle = useCallback((slot, date, hour, minute) => {
+  const handleSlotToggle = useCallback(async (slot, date, hour, minute) => {
     const slotDateTime = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -56,8 +58,8 @@ export default function TimeGrid({
       minute,
     )
     if (
-      slotDateTime >= registrationStart &&
-      slotDateTime <= registrationEnd &&
+      slotDateTime >= timegridInfo.registrationStart &&
+      slotDateTime <= timegridInfo.registrationEnd &&
       slotDateTime >= TODAY
     ) {
       setSelectedSlots((prev) => {
@@ -67,6 +69,41 @@ export default function TimeGrid({
         } else {
           newSlots.add(slot)
         }
+
+        // TODO DB 저장
+        try {
+          // 중복값 체크
+          const { data: existAvailability } = await supabase
+            .from("availabilities")
+            .select("id")
+            .eq("event_id", availabilityInfo.eventId)
+            .eq("participant_id", availabilityInfo.participantId)
+            .single()
+
+          if (existAvailability) {
+            // 기존 timeslots 업데이트
+            const { data, error } = await supabase
+              .from("availabilities")
+              .update({ available_timeslots: newSlots })
+              .eq("id", existAvailability.id)
+            
+          } else {
+            // 신규 입력
+            const { data, error } = await supabase
+              .from("availabilities")
+              .insert({
+                event_id: availabilityInfo.eventId,
+                participant_id: availabilityInfo.participantId,
+                available_timeslots: newSlots,
+              })
+              .select()
+              .single()
+          }
+          if (error) throw error
+        } catch (err) {
+          console.error("Supabase Insert Error:", err)
+        }
+
         return newSlots
       })
     }
