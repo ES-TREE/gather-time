@@ -1,8 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import PropTypes from "prop-types"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useState } from "react"
 import { useSwipeable } from "react-swipeable"
-import supabase from "../../libs/supabase"
 import { getMonday } from "../../utils/date"
 
 TimeGrid.propTypes = {
@@ -14,11 +13,6 @@ TimeGrid.propTypes = {
     registrationStart: PropTypes.string,
     registrationEnd: PropTypes.string,
   }),
-  availabilityInfo: PropTypes.shape({
-    eventId: PropTypes.number,
-    participantId: PropTypes.number,
-    availableTimeslots: PropTypes.string,
-  }),
 }
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
@@ -29,7 +23,6 @@ export default function TimeGrid({
   selectedSlots,
   setSelectedSlots,
   timegridInfo,
-  availabilityInfo,
 }) {
   const [currentWeek, setCurrentWeek] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -80,52 +73,6 @@ export default function TimeGrid({
       })
     }
   }, [])
-
-  const saveTimeSlot = async (newSlots) => {
-    try {
-      // 중복값 체크
-      const { data: existAvailability } = await supabase
-        .from("availabilities")
-        .select("id")
-        .eq("event_id", availabilityInfo?.eventId)
-        .eq("participant_id", availabilityInfo?.participantId)
-
-      if (existAvailability.length) {
-        // 기존 timeslots 업데이트
-        const { data, error } = await supabase
-          .from("availabilities")
-          .update({ available_timeslots: [...newSlots] })
-          .eq("id", existAvailability[0].id)
-          .select()
-          .single()
-        console.log("---기존 timeslots 업데이트---")
-        console.log(data)
-        console.log(error)
-      } else {
-        // 신규 입력
-        const { data, error } = await supabase
-          .from("availabilities")
-          .insert({
-            event_id: availabilityInfo.eventId,
-            participant_id: availabilityInfo.participantId,
-            available_timeslots: [...newSlots],
-          })
-          .select()
-          .single()
-        console.log("---신규 입력---")
-        console.log(data)
-        console.log(error)
-      }
-    } catch (err) {
-      console.error("Supabase Insert Error:", err)
-    }
-  }
-
-  useEffect(() => {
-    if (0 < selectedSlots.size) {
-      saveTimeSlot(selectedSlots)
-    }
-  }, [selectedSlots])
 
   return (
     <div className="space-y-2">
