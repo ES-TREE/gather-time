@@ -14,16 +14,6 @@ ViewTimeGrid.propTypes = {
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
 const SLOT_INTERVAL = 30
-const TODAY = new Date()
-
-// 1인 기준 목업 데이터 (임시 일정 정보)
-const MOCK_SELECTED_SLOTS = new Set([
-  "03/12-수-09:00",
-  "03/12-수-09:30",
-  "03/12-수-14:00",
-  "03/12-수-14:30",
-  "03/14-금-18:00",
-])
 
 export default function ViewTimeGrid({
   startHour,
@@ -31,12 +21,13 @@ export default function ViewTimeGrid({
   // TODO 이벤트 범위 외 주 이동 불가하게 수정
   registrationStart,
   registrationEnd,
-  selectedSlots = MOCK_SELECTED_SLOTS,
+  selectedSlots = new Set(),
 }) {
   const [currentWeek, setCurrentWeek] = useState(0)
+  const today = new Date()
 
   const startOfWeek = getMonday(
-    new Date(TODAY.setDate(TODAY.getDate() + currentWeek * 7)),
+    new Date(today.setDate(today.getDate() + currentWeek * 7)),
   )
   const formattedDays = DAYS.map((_, i) => {
     const d = new Date(startOfWeek)
@@ -59,17 +50,17 @@ export default function ViewTimeGrid({
       {/* Weekly Navigator */}
       <div className="flex w-full items-center justify-between">
         <button
-          onClick={() => setCurrentWeek(currentWeek - 1)}
+          onClick={() => setCurrentWeek((prev) => prev - 1)}
           className="rounded-full p-2 active:bg-stone-100"
         >
           <ChevronLeft />
         </button>
         <h2 className="text-lg font-bold">
-          {TODAY.getFullYear()}년{" "}
-          {String(TODAY.getMonth() + 1).padStart(2, "0")}월
+          {today.getFullYear()}년{" "}
+          {String(today.getMonth() + 1).padStart(2, "0")}월
         </h2>
         <button
-          onClick={() => setCurrentWeek(currentWeek + 1)}
+          onClick={() => setCurrentWeek((prev) => prev + 1)}
           className="rounded-full p-2 active:bg-stone-100"
         >
           <ChevronRight />
@@ -85,7 +76,7 @@ export default function ViewTimeGrid({
           {formattedDays.map(({ day, date }) => (
             <li key={day} className="text-center font-bold">
               {day}
-              <br />
+              <br></br>
               {date}
             </li>
           ))}
@@ -93,22 +84,34 @@ export default function ViewTimeGrid({
         <div className="grid select-none grid-cols-8 overflow-auto">
           {/* Time Grid */}
           {Array.from(
-            { length: (endHour - startHour) * (60 / SLOT_INTERVAL) },
+            {
+              length: (endHour - startHour) * (60 / SLOT_INTERVAL),
+            },
             (_, i) => {
               const hour = startHour + Math.floor(i / (60 / SLOT_INTERVAL))
               const minute = (i % (60 / SLOT_INTERVAL)) * SLOT_INTERVAL
               const timeLabel = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
               return (
                 <React.Fragment key={`row-${i}`}>
+                  {/* Time Labels (Non-Interactive) */}
                   <div className="pointer-events-none border-b border-l border-r p-1 pr-2 text-right text-xs">
                     {timeLabel}
                   </div>
-                  {formattedDays.map(({ day, formattedDate }) => {
-                    const slotKey = `${formattedDate}-${day}-${timeLabel}`
+                  {/* Time Slots (Interactive) */}
+                  {formattedDays.map(({ fullDate }) => {
+                    const slotDateTime = new Date(
+                      fullDate.getFullYear(),
+                      fullDate.getMonth(),
+                      fullDate.getDate(),
+                      hour,
+                      minute,
+                    )
+                    const slotKey = slotDateTime.toISOString()
                     return (
                       <div
                         key={slotKey}
-                        className={`border-b border-r p-2 ${selectedSlots.has(slotKey) ? "bg-primary-300" : "bg-stone-100"}`}
+                        className={`cursor-pointer border-b border-r p-2 ${selectedSlots.has(slotKey) ? "bg-primary-300" : "cursor-not-allowed bg-stone-100"}`}
+                        data-slot-key={slotKey}
                       />
                     )
                   })}

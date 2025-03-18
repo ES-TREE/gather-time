@@ -17,7 +17,6 @@ TimeGrid.propTypes = {
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
 const SLOT_INTERVAL = 30 // 일정 30분 단위로 등록
-const TODAY = new Date()
 
 export default function TimeGrid({
   selectedSlots,
@@ -59,7 +58,7 @@ export default function TimeGrid({
     if (
       slotDateTime >= timegridInfo.registrationStart &&
       slotDateTime <= timegridInfo.registrationEnd &&
-      slotDateTime >= TODAY
+      slotDateTime >= today
     ) {
       setSelectedSlots((prev) => {
         const newSlots = new Set(prev)
@@ -142,7 +141,7 @@ export default function TimeGrid({
                     const isDisabled =
                       slotDateTime < timegridInfo?.registrationStart ||
                       slotDateTime > timegridInfo?.registrationEnd ||
-                      slotDateTime < TODAY
+                      slotDateTime < today
                     return (
                       <div
                         key={slotKey}
