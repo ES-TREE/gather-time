@@ -6,6 +6,8 @@ import supabase from "../../libs/supabase"
 import { getMonday } from "../../utils/date"
 
 TimeGrid.propTypes = {
+  selectedSlots: PropTypes.object,
+  setSelectedSlots: PropTypes.func,
   timegridInfo: PropTypes.shape({
     startHour: PropTypes.number,
     endHour: PropTypes.number,
@@ -23,9 +25,13 @@ const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
 const SLOT_INTERVAL = 30 // 일정 30분 단위로 등록
 const TODAY = new Date()
 
-export default function TimeGrid({ timegridInfo, availabilityInfo }) {
+export default function TimeGrid({
+  selectedSlots,
+  setSelectedSlots,
+  timegridInfo,
+  availabilityInfo,
+}) {
   const [currentWeek, setCurrentWeek] = useState(0)
-  const [selectedSlots, setSelectedSlots] = useState(new Set())
   const [isDragging, setIsDragging] = useState(false)
   const [lastTouchedSlot, setLastTouchedSlot] = useState(null) // 마지막으로 터치한 슬롯 저장
 

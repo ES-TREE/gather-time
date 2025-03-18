@@ -1,5 +1,6 @@
 import PropTypes from "prop-types"
 import { useState } from "react"
+import supabase from "../../libs/supabase"
 import { formatToYYMMDD } from "../../utils/date"
 import FixedBottomButton from "../button/FixedBottomButton"
 import EditTimeGrid from "../calendar/EditTimeGrid"
@@ -25,6 +26,20 @@ export default function CalendarView({ eventInfo, participantId }) {
     participantId: participantId,
     availableTimeslots: "",
   })
+  const [selectedSlots, setSelectedSlots] = useState(new Set())
+
+  const resetTimeSlot = async () => {
+    try {
+      await supabase
+        .from("availabilities")
+        .delete()
+        .eq("event_id", availabilityInfo?.eventId)
+        .eq("participant_id", availabilityInfo?.participantId)
+      setSelectedSlots(new Set())
+    } catch (err) {
+      console.error("Supabase Insert Error:", err)
+    }
+  }
 
   // 이벤트 정보
   // ? 사용자와 상호작용 하는 데이터가 아니어서 상태가 아닌 객체로 변경
@@ -62,12 +77,14 @@ export default function CalendarView({ eventInfo, participantId }) {
             </div>
 
             <EditTimeGrid
+              selectedSlots={selectedSlots}
+              setSelectedSlots={setSelectedSlots}
               timegridInfo={timegridInfo}
               availabilityInfo={availabilityInfo}
             />
           </section>
 
-          <FixedBottomButton>초기화</FixedBottomButton>
+          <FixedBottomButton onClick={resetTimeSlot}>초기화</FixedBottomButton>
         </>
       ),
     },
