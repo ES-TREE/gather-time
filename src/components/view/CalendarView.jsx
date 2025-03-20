@@ -1,5 +1,6 @@
 import PropTypes from "prop-types"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import supabase from "../../libs/supabase"
 import { formatToYYMMDD } from "../../utils/date"
 import FixedBottomButton from "../button/FixedBottomButton"
 import EditTimeGrid from "../calendar/EditTimeGrid"
@@ -20,11 +21,90 @@ CalendarView.propTypes = {
 }
 
 export default function CalendarView({ eventInfo, participantId }) {
-  const [availabilityInfo, setAvailabilityInfo] = useState({
-    eventId: eventInfo.id,
-    participantId: participantId,
-    availableTimeslots: "",
-  })
+  const [selectedSlots, setSelectedSlots] = useState(new Set())
+  const isInitialLoadTimeSlot = useRef(true)
+
+  // 기존에 저장한 시간 조회 & 상태에 저장
+  const initTimeSlot = async () => {
+    try {
+      const { data } = await supabase
+        .from("availabilities")
+        .select("available_timeslots")
+        .eq("event_id", eventInfo?.id)
+        .eq("participant_id", participantId)
+
+      setSelectedSlots(new Set(data[0]?.available_timeslots))
+    } catch (err) {
+      console.error("Supabase Insert Error:", err)
+    } finally {
+      isInitialLoadTimeSlot.current = false
+    }
+  }
+
+  useEffect(() => {
+    initTimeSlot()
+  }, [])
+
+  // 선택한 시간 저장
+  const saveTimeSlot = async (newSlots) => {
+    try {
+      // 중복값 체크
+      const { data: existAvailability } = await supabase
+        .from("availabilities")
+        .select("id")
+        .eq("event_id", eventInfo?.id)
+        .eq("participant_id", participantId)
+
+      if (existAvailability.length) {
+        // 기존 timeslots 업데이트
+        const { data, error } = await supabase
+          .from("availabilities")
+          .update({ available_timeslots: [...newSlots] })
+          .eq("id", existAvailability[0].id)
+          .select()
+          .single()
+        console.log("---기존 timeslots 업데이트---")
+        console.log(data)
+        console.log(error)
+      } else {
+        // 신규 입력
+        const { data, error } = await supabase
+          .from("availabilities")
+          .insert({
+            event_id: eventInfo?.id,
+            participant_id: participantId,
+            available_timeslots: [...newSlots],
+          })
+          .select()
+          .single()
+        console.log("---신규 입력---")
+        console.log(data)
+        console.log(error)
+      }
+    } catch (err) {
+      console.error("Supabase Insert Error:", err)
+    }
+  }
+
+  useEffect(() => {
+    if (!isInitialLoadTimeSlot.current && selectedSlots.size > 0) {
+      saveTimeSlot(selectedSlots)
+    }
+  }, [selectedSlots])
+
+  // 선택한 시간 초기화
+  const resetTimeSlot = async () => {
+    try {
+      await supabase
+        .from("availabilities")
+        .delete()
+        .eq("event_id", eventInfo?.id)
+        .eq("participant_id", participantId)
+      setSelectedSlots(new Set())
+    } catch (err) {
+      console.error("Supabase Insert Error:", err)
+    }
+  }
 
   // 이벤트 정보
   // ? 사용자와 상호작용 하는 데이터가 아니어서 상태가 아닌 객체로 변경
@@ -62,12 +142,13 @@ export default function CalendarView({ eventInfo, participantId }) {
             </div>
 
             <EditTimeGrid
+              selectedSlots={selectedSlots}
+              setSelectedSlots={setSelectedSlots}
               timegridInfo={timegridInfo}
-              availabilityInfo={availabilityInfo}
             />
           </section>
 
-          <FixedBottomButton>초기화</FixedBottomButton>
+          <FixedBottomButton onClick={resetTimeSlot}>초기화</FixedBottomButton>
         </>
       ),
     },
