@@ -1,10 +1,13 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { useSwipeable } from "react-swipeable"
+import supabase from "../../libs/supabase"
 import { getMonday } from "../../utils/date"
 
 ViewTimeGrid.propTypes = {
+  event_id: PropTypes.number,
   startHour: PropTypes.number,
   endHour: PropTypes.number,
   registrationStart: PropTypes.string,
@@ -16,13 +19,14 @@ const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
 const SLOT_INTERVAL = 30
 
 export default function ViewTimeGrid({
+  event_id,
   startHour,
   endHour,
   // TODO 이벤트 범위 외 주 이동 불가하게 수정
   registrationStart,
   registrationEnd,
-  selectedSlots = new Set(),
 }) {
+  const [slotCountMap, setSlotCountMap] = useState(new Map())
   const [currentWeek, setCurrentWeek] = useState(0)
   const today = new Date()
 
@@ -44,6 +48,37 @@ export default function ViewTimeGrid({
     onSwipedLeft: () => setCurrentWeek((prev) => prev + 1),
     onSwipedRight: () => setCurrentWeek((prev) => prev - 1),
   })
+
+  // 투표 결과 조회
+  const fetchVoteResult = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("availabilities")
+        .select("*")
+        .eq("event_id", event_id)
+
+      if (error) {
+        toast.error("오류가 발생했어요. 잠시후 다시 시도해주세요.")
+        return
+      }
+
+      const slotSelections = data.map((d) => d.available_timeslots)
+      const slotCountMap = new Map()
+      slotSelections.flat().forEach((slot) => {
+        slotCountMap.set(slot, (slotCountMap.get(slot) || 0) + 1)
+      })
+      setSlotCountMap(slotCountMap)
+    } catch (err) {
+      toast.error("오류가 발생했어요. 잠시후 다시 시도해주세요.")
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchVoteResult()
+  }, [])
+
+  const maxCount = Math.max(...Array.from(slotCountMap.values(), (v) => v || 0))
 
   return (
     <div className="space-y-2">
@@ -107,10 +142,11 @@ export default function ViewTimeGrid({
                       minute,
                     )
                     const slotKey = slotDateTime.toISOString()
+                    const count = slotCountMap.get(slotKey) || 0
                     return (
                       <div
                         key={slotKey}
-                        className={`cursor-pointer border-b border-r p-2 ${selectedSlots.has(slotKey) ? "bg-primary-300" : "cursor-not-allowed bg-stone-100"}`}
+                        className={`border-b border-r p-2 ${getBgClass({ count, maxCount })}`}
                         data-slot-key={slotKey}
                       />
                     )
@@ -123,4 +159,16 @@ export default function ViewTimeGrid({
       </div>
     </div>
   )
+}
+
+const getBgClass = ({ count, maxCount }) => {
+  const ratio = maxCount > 0 ? count / maxCount : 0
+
+  if (ratio === 0) return "bg-white"
+  if (ratio < 0.2) return "bg-primary-50"
+  if (ratio < 0.4) return "bg-primary-100"
+  if (ratio < 0.6) return "bg-primary-200"
+  if (ratio < 0.8) return "bg-primary-400"
+  if (ratio < 1) return "bg-primary-500"
+  return "bg-primary-700"
 }

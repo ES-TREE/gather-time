@@ -178,12 +178,7 @@ export default function CalendarView({ eventInfo, participantId }) {
               />
             </div>
 
-            <ViewTimeGrid
-              startHour={timegridInfo?.startHour}
-              endHour={timegridInfo?.endHour}
-              registrationStart={timegridInfo?.registrationStart}
-              registrationEnd={timegridInfo?.registrationEnd}
-            />
+            <ViewTimeGrid event_id={eventInfo?.id} {...timegridInfo} />
           </section>
         </>
       ),
