@@ -12,7 +12,8 @@ ViewTimeGrid.propTypes = {
   endHour: PropTypes.number,
   registrationStart: PropTypes.string,
   registrationEnd: PropTypes.string,
-  selectedSlots: PropTypes.instanceOf(Set),
+  slotCountMap: PropTypes.instanceOf(Map),
+  maxCount: PropTypes.number,
 }
 
 const DAYS = ["월", "화", "수", "목", "금", "토", "일"]
@@ -25,8 +26,9 @@ export default function ViewTimeGrid({
   // TODO 이벤트 범위 외 주 이동 불가하게 수정
   registrationStart,
   registrationEnd,
+  slotCountMap,
+  maxCount,
 }) {
-  const [slotCountMap, setSlotCountMap] = useState(new Map())
   const [currentWeek, setCurrentWeek] = useState(0)
   const today = new Date()
 
@@ -48,37 +50,6 @@ export default function ViewTimeGrid({
     onSwipedLeft: () => setCurrentWeek((prev) => prev + 1),
     onSwipedRight: () => setCurrentWeek((prev) => prev - 1),
   })
-
-  // 투표 결과 조회
-  const fetchVoteResult = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("availabilities")
-        .select("*")
-        .eq("event_id", event_id)
-
-      if (error) {
-        toast.error("오류가 발생했어요. 잠시후 다시 시도해주세요.")
-        return
-      }
-
-      const slotSelections = data.map((d) => d.available_timeslots)
-      const slotCountMap = new Map()
-      slotSelections.flat().forEach((slot) => {
-        slotCountMap.set(slot, (slotCountMap.get(slot) || 0) + 1)
-      })
-      setSlotCountMap(slotCountMap)
-    } catch (err) {
-      toast.error("오류가 발생했어요. 잠시후 다시 시도해주세요.")
-      console.log(err)
-    }
-  }
-
-  useEffect(() => {
-    fetchVoteResult()
-  }, [])
-
-  const maxCount = Math.max(...Array.from(slotCountMap.values(), (v) => v || 0))
 
   return (
     <div className="space-y-2">

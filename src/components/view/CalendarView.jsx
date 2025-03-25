@@ -24,6 +24,51 @@ export default function CalendarView({ eventInfo, participantId }) {
   const [selectedSlots, setSelectedSlots] = useState(new Set())
   const isInitialLoadTimeSlot = useRef(true)
 
+  const [slotCountMap, setSlotCountMap] = useState(new Map())
+  const [maxCount, setMaxCount] = useState(0)
+  const [topThreeDates, setTopThreeDates] = useState([])
+  const [totalVotes, setTotalVotes] = useState(0)
+
+  const fetchVoteResult = async () => {
+    const { data, error } = await supabase
+      .from("availabilities")
+      .select("*")
+      .eq("event_id", eventInfo?.id)
+
+    if (error) return console.error(error)
+
+    const slotSelections = data.map((d) => d.available_timeslots)
+    const slotMap = new Map()
+
+    slotSelections.flat().forEach((slot) => {
+      slotMap.set(slot, (slotMap.get(slot) || 0) + 1)
+    })
+
+    const sortedTop = Array.from(slotMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([date, count], idx) => ({
+        id: idx + 1,
+        date: new Date(date).toLocaleString("ko-KR", {
+          year: "2-digit",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        votes: count,
+      }))
+
+    setSlotCountMap(slotMap)
+    setMaxCount(Math.max(...slotMap.values(), 0))
+    setTopThreeDates(sortedTop)
+    setTotalVotes(data.length)
+  }
+
+  useEffect(() => {
+    fetchVoteResult()
+  }, [])
+
   // 기존에 저장한 시간 조회 & 상태에 저장
   const initTimeSlot = async () => {
     try {
@@ -117,16 +162,6 @@ export default function CalendarView({ eventInfo, participantId }) {
     registrationEnd: new Date(eventInfo.endDate),
   }
 
-  // ! mock data
-  // 전체 참여자
-  const totalVotes = 5
-  // Top3 날짜
-  const topThreeDates = [
-    { id: 1, date: "25년 3월 19일 10:00", votes: 4 },
-    { id: 2, date: "25년 3월 29일 21:30", votes: 3 },
-    { id: 3, date: "25년 4월 2일 16:30", votes: 2 },
-  ]
-
   const tabs = [
     {
       id: "input",
@@ -178,7 +213,12 @@ export default function CalendarView({ eventInfo, participantId }) {
               />
             </div>
 
-            <ViewTimeGrid event_id={eventInfo?.id} {...timegridInfo} />
+            <ViewTimeGrid
+              event_id={eventInfo?.id}
+              {...timegridInfo}
+              slotCountMap={slotCountMap}
+              maxCount={maxCount}
+            />
           </section>
         </>
       ),
