@@ -63,6 +63,124 @@ export default function CalendarView({ eventInfo, participantId }) {
     setMaxCount(Math.max(...slotMap.values(), 0))
     setTopThreeDates(sortedTop)
     setTotalVotes(data.length)
+
+    // CASE 1. 최장 연속 일정 TOP3
+    // 연속된 시간이 가장 긴 일정 중
+    // 가장 많은 인원이 참석할 수 있고
+    // 가장 빠른 일정
+    const sortedTopLongest = Array.from(slotMap.entries())
+      .map(([key, count]) => {
+        const [start, end] = key.split("~")
+        const startDate = new Date(start)
+        const endDate = new Date(end)
+        const duration = (endDate - startDate) / (1000 * 60) // 분 단위
+        return { key, count, startDate, duration }
+      })
+      .sort((a, b) => {
+        if (b.duration !== a.duration) return b.duration - a.duration // 긴 시간 우선
+        if (b.count !== a.count) return b.count - a.count // 많은 인원 우선
+        return a.startDate - b.startDate // 빠른 시간 우선
+      })
+      .slice(0, 3)
+      .map((item, idx) => {
+        const [start, end] = item.key.split("~")
+        return {
+          id: idx + 1,
+          start: new Date(start).toLocaleString("ko-KR", {
+            year: "2-digit",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          end: new Date(end).toLocaleString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          votes: item.count,
+        }
+      })
+    console.log("sortedTopLongest", sortedTopLongest)
+
+    // CASE 2. 전원 참석 일정 TOP3
+    // 전원 참석 가능한 일정 중
+    // 가장 빠른 일정
+    const sortedToAllAvailable = Array.from(slotMap.entries())
+      // 1. 전원 참석 가능한 일정만 필터링
+      .filter(([_, count]) => count === totalParticipants)
+
+      // 2. 가장 빠른 일정 순으로 정렬
+      .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+
+      // 3. 상위 3개 일정만 추출
+      .slice(0, 3)
+
+      // 4. 표시용 데이터 가공
+      .map(([date, count], idx) => ({
+        id: idx + 1,
+        date: new Date(date).toLocaleString("ko-KR", {
+          year: "2-digit",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        votes: count,
+      }))
+    console.log(sortedToAllAvailable)
+
+    // CASE 3. 최우선 일정 TOP3
+    // 가장 빠른 일정 중
+    // 가장 많은 인원이 참석할 수 있고
+    // 연속된 시간이 가장 긴 일정
+    const sortedTopPriority = Array.from(slotMap.entries())
+      .map(([key, count]) => {
+        const [start, end] = key.split("~")
+        const startDate = new Date(start)
+        const endDate = new Date(end)
+        const duration = (endDate - startDate) / (1000 * 60) // 분 단위
+
+        return {
+          key,
+          count,
+          startDate,
+          duration,
+        }
+      })
+      .sort((a, b) => {
+        // 1. 빠른 시작 시간
+        if (a.startDate.getTime() !== b.startDate.getTime()) {
+          return a.startDate - b.startDate
+        }
+        // 2. 더 많은 인원
+        if (b.count !== a.count) {
+          return b.count - a.count
+        }
+        // 3. 더 긴 시간
+        return b.duration - a.duration
+      })
+      .slice(0, 3)
+      .map((item, idx) => {
+        const [start, end] = item.key.split("~")
+
+        return {
+          id: idx + 1,
+          start: new Date(start).toLocaleString("ko-KR", {
+            year: "2-digit",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          end: new Date(end).toLocaleString("ko-KR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          votes: item.count,
+        }
+      })
+
+    console.log("sortedTopPriority", sortedTopPriority)
   }
 
   useEffect(() => {
@@ -232,6 +350,7 @@ export default function CalendarView({ eventInfo, participantId }) {
       <h2 className="text-lg font-bold">
         {eventInfo.title} {currentTab === "view" && "투표 결과"}
       </h2>
+
       <Tab tabs={tabs} currentTab={currentTab} onChangeTab={setCurrentTab} />
     </div>
   )
